@@ -1,16 +1,16 @@
 <details>
   <summary>Module 1 - Ma famille</summary>
   <p>
-    Ma famille et moi: <a href="https://adaligand.github.io/9FR/famillereadaloud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9FR/Familledictation.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9FR/Familyreading.html">Reading</a>
+    Ma famille et moi: <a href="https://adaligand.github.io/9-French/famillereadaloud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/Familledictation.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/Familyreading.html">Reading</a>
   </p>
   <p>
-    Description: <a href="https://adaligand.github.io/9FR/ReadaloudDescription.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9FR/DictationDescription.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9FR/DescriptionReading.html">Reading</a>
+    Description: <a href="https://adaligand.github.io/9-French/ReadaloudDescription.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/DictationDescription.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/DescriptionReading.html">Reading</a>
   </p>
   <p>
-    Personnalité: <a href="https://adaligand.github.io/9FR/Personalitéaloud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9FR/Personalitédict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9FR/Personalitéread.html">Reading</a>
+    Personnalité: <a href="https://adaligand.github.io/9-French/Personalitéaloud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/Personalitédict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/Personalitéread.html">Reading</a>
   </p>
   <p>
-    Mon enfance: <a href="https://adaligand.github.io/9FR/enfancealoud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9FR/enfancedict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9FR/enfanceread.html">Reading</a>
+    Mon enfance: <a href="https://adaligand.github.io/9-French/enfancealoud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/enfancedict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/enfanceread.html">Reading</a>
   </p>
 </details>
 
