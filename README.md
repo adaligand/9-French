@@ -1,78 +1,100 @@
 <details>
   <summary>Module 1 - Ma famille</summary>
-  
-  Ma famille et moi: [Read aloud](https://adaligand.github.io/9FR/famillereadaloud.html)&nbsp;[Dictation](https://adaligand.github.io/9FR/Familledictation.html)&nbsp;[Reading](https://adaligand.github.io/9FR/Familyreading.html)
-
-  Description: [Read aloud](https://adaligand.github.io/9FR/ReadaloudDescription.html)&nbsp;[Dictation](https://adaligand.github.io/9FR/DictationDescription.html)&nbsp;[Reading](https://adaligand.github.io/9FR/DescriptionReading.html)
-
-  Personnalité: [Read aloud](https://adaligand.github.io/9FR/Personalitéaloud.html)&nbsp;[Dictation](https://adaligand.github.io/9FR/Personalitédict.html)&nbsp;[Reading](https://adaligand.github.io/9FR/Personalitéread.html)
-
-  Mon enfance: [Read aloud](https://adaligand.github.io/9FR/enfancealoud.html)&nbsp;[Dictation](https://adaligand.github.io/9FR/enfancedict.html)&nbsp;[Reading](https://adaligand.github.io/9FR/enfanceread.html)
-
+  <p>
+    Ma famille et moi: <a href="https://adaligand.github.io/9FR/famillereadaloud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9FR/Familledictation.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9FR/Familyreading.html">Reading</a>
+  </p>
+  <p>
+    Description: <a href="https://adaligand.github.io/9FR/ReadaloudDescription.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9FR/DictationDescription.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9FR/DescriptionReading.html">Reading</a>
+  </p>
+  <p>
+    Personnalité: <a href="https://adaligand.github.io/9FR/Personalitéaloud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9FR/Personalitédict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9FR/Personalitéread.html">Reading</a>
+  </p>
+  <p>
+    Mon enfance: <a href="https://adaligand.github.io/9FR/enfancealoud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9FR/enfancedict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9FR/enfanceread.html">Reading</a>
+  </p>
 </details>
 
 <details>
   <summary>Module 2 - Chez le médecin</summary>
-  
-  Le corps: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  J'ai mal: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Problèmes de santé: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Je me suis fait mal: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Chez le médecin: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
+  <p>
+    Le corps: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    J'ai mal: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Problèmes de santé: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Je me suis fait mal: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Chez le médecin: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
 </details>
 
 <details>
   <summary>Module 3 - En forme</summary>
-  
-  Les sports: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Les bienfaits du sport: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Je mange: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Bonne cuisine: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  En pleine forme: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
+  <p>
+    Les sports: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Les bienfaits du sport: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Je mange: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Bonne cuisine: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    En pleine forme: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
 </details>
 
 <details>
   <summary>Module 4 - Les nouvelles technologies</summary>
-  
-  Nouvelles technologies: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Internet: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Lecture: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Musique: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Télé: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Cinéma: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
+  <p>
+    Nouvelles technologies: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Internet: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Lecture: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Musique: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Télé: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Cinéma: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
 </details>
 
 <details>
   <summary>Module 5 - Les vacances</summary>
-  
-  Pays: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Vacances: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  En ville: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Les directions: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Les courses: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Au resto: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
-  Jours de fête: [Read aloud](#)&nbsp;[Dictation](#)&nbsp;[Reading](#)
-
+  <p>
+    Pays: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Vacances: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    En ville: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Les directions: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Les courses: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Au resto: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
+  <p>
+    Jours de fête: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
+  </p>
 </details>
