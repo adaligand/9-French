@@ -1,7 +1,7 @@
 <details>
   <summary>Module 1 - Ma famille</summary>
   <p>
-    Ma famille et moi: <a href="https://adaligand.github.io/9-French/famillereadaloud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/Familledictation.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/Familyreading.html">Reading</a>
+    Ma famille et moi: <a href="https://adaligand.github.io/9-French/Family/famillealoud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/Family/familledict.html.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/Family/familleread.html">Reading</a>
   </p>
   <p>
     Description: <a href="https://adaligand.github.io/9-French/ReadaloudDescription.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/DictationDescription.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/DescriptionReading.html">Reading</a>
