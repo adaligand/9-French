@@ -17,7 +17,7 @@
 <details>
   <summary>Module 2 - Chez le médecin</summary>
   <p>
-   J'ai mal: <a href="#">Read aloud</a>&nbsp;<a href="[#](https://adaligand.github.io/9-French/doctor/jaimaldict.html)">Dictation</a>&nbsp;<a href="#">Reading</a>
+   J'ai mal: <a href="#">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/doctor/jaimaldict.html">Dictation</a>&nbsp;<a href="#">Reading</a>
   </p>
   <p>
     Problèmes de santé: <a href="#">Read aloud</a>&nbsp;<a href="#">Dictation</a>&nbsp;<a href="#">Reading</a>
