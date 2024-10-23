@@ -7,10 +7,10 @@
     Description: <a href="https://adaligand.github.io/9-French/Family/descriptionaloud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/Family/descriptiondict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/Family/descriptionread.html">Reading</a>
   </p>
   <p>
-    Personnalité: <a href="https://adaligand.github.io/9-French/Personalitéaloud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/Personalitédict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/Personalitéread.html">Reading</a>
+    Personnalité: <a href="https://adaligand.github.io/9-French/Family/Personalitéaloud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/Family/Personalitédict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/Family/Personalitéread.html">Reading</a>
   </p>
   <p>
-    Mon enfance: <a href="https://adaligand.github.io/9-French/enfancealoud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/enfancedict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/enfanceread.html">Reading</a>
+    Mon enfance: <a href="https://adaligand.github.io/9-French/Family/enfancealoud.html">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/Family/enfancedict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/Family/enfanceread.html">Reading</a>
   </p>
 </details>
 
