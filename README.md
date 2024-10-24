@@ -17,16 +17,16 @@
 <details>
   <summary>Module 2 - Chez le médecin</summary>
   <p>
-   J'ai mal: <a href="https://adaligand.github.io/9-French/">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/doctor/jaimaldict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Reading</a>
+   J'ai mal: <a href="https://adaligand.github.io/9-French/doctor/jaimalaloud">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/doctor/jaimaldict.html">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Reading</a>
   </p>
   <p>
-    Problèmes de santé: <a href="https://adaligand.github.io/9-French/">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Reading</a>
+    Problèmes de santé: <a href="https://adaligand.github.io/9-French/doctor/problemesaloud">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/doctor/problemesdict">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Reading</a>
   </p>
   <p>
-    Je me suis fait mal: <a href="https://adaligand.github.io/9-French/">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Reading</a>
+    Je me suis fait mal: <a href="https://adaligand.github.io/9-French/doctor/faitmalaloud">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/doctor/faitmaldict">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Reading</a>
   </p>
   <p>
-    Chez le médecin: <a href="https://adaligand.github.io/9-French/">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Reading</a>
+    Chez le médecin: <a href="https://adaligand.github.io/9-French/doctor/conseilsaloud">Read aloud</a>&nbsp;<a href="https://adaligand.github.io/9-French/doctor/conseilsdict">Dictation</a>&nbsp;<a href="https://adaligand.github.io/9-French/">Reading</a>
   </p>
 </details>
 
