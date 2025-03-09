@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -199,35 +200,34 @@ display: none;
         }
 
         function revealLetter(letter, button) {
-            const words = frenchSentence.match(/[\wÀ-ÿ]+|[^\s\wÀ-ÿ]/g); // Split by letters and keep punctuation marks
-            const word = words[currentWordIndex];
-            if (/[^\p{L}\s]/u.test(word)) { // If it's a punctuation mark
-                alert("Punctuation marks are not clickable.");
-                return;
-            }
-            const wordWithoutPunctuation = word.replace(/[^\p{L}]/ug, ""); // Remove punctuation
-            const indexToReplace = currentWordAnagram.indexOf('*');
-            if (letter === wordWithoutPunctuation[indexToReplace]) {
-                currentWordAnagram = currentWordAnagram.substring(0, indexToReplace) + letter + currentWordAnagram.substring(indexToReplace + 1);
-                displayAnagram();
-                if (!currentWordAnagram.includes('*')) {
-                    currentWordIndex++;
-                    while (currentWordIndex < words.length && /[^\p{L}\s]/u.test(words[currentWordIndex])) {
-                        currentWordIndex++; // Skip punctuation marks
-                    }
-                    if (currentWordIndex < words.length) {
-                        currentWordAnagram = '*'.repeat(words[currentWordIndex].replace(/[^\p{L}]/ug, "").length); // Remove punctuation
-                        displayAnagram();
-                    } else {
-                        alert("Congratulations! You solved the anagram.");
-                    }
-                }
+    const words = frenchSentence.match(/[\wÀ-ÿ]+|[^\s\wÀ-ÿ]/g);
+    const word = words[currentWordIndex];
+    if (/[^\p{L}\s]/u.test(word)) {
+        return; // Ignore punctuation
+    }
+    const wordWithoutPunctuation = word.replace(/[^\p{L}]/ug, "");
+    const indexToReplace = currentWordAnagram.indexOf('*');
 
-                button.remove(); // Remove the clicked button
+    if (letter === wordWithoutPunctuation[indexToReplace]) {
+        currentWordAnagram = currentWordAnagram.substring(0, indexToReplace) + letter + currentWordAnagram.substring(indexToReplace + 1);
+        displayAnagram();
+        
+        if (!currentWordAnagram.includes('*')) {
+            currentWordIndex++;
+            while (currentWordIndex < words.length && /[^\p{L}\s]/u.test(words[currentWordIndex])) {
+                currentWordIndex++; // Skip punctuation
+            }
+            if (currentWordIndex < words.length) {
+                currentWordAnagram = '*'.repeat(words[currentWordIndex].replace(/[^\p{L}]/ug, "").length);
+                displayAnagram();
             } else {
-                alert("Incorrect order of letters.");
+                alert("Congratulations! You solved the anagram.");
             }
         }
+        button.remove();
+    }
+}
+
 
         // Function to handle keyboard input
         document.addEventListener("keydown", function(event) {
