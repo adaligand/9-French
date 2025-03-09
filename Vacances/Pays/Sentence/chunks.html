@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chunks</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    .title {
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .subtitle {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .counter {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      font-size: 20px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #f9f9f9;
+      border: 2px solid #ccc;
+      color: #000000;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    .hide {
+      display: none;
+    }
+    .english-sentence {
+      margin-bottom: 20px;
+      font-size: 20px;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+      text-align: center;
+    }
+    .draggable-word {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-right: 5px;
+      font-size: 20px;
+      margin-bottom: 5px;
+      border: 1px solid black;
+      padding: 2px 10px;
+      border-radius: 5px;
+      background-color: #f0f0f0;
+      height: 20px;
+      overflow: hidden;
+    }
+    .correct-chunk {
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+    }
+    .wrong-chunk {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+    }
+    .dropzone-container {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .dropzone {
+      border: 1px dashed #007bff;
+      min-height: 20px;
+      font-size: 20px;
+      height: auto;
+      border-radius: 10px;
+      display: inline-block;
+      padding: 5px 10px;
+      vertical-align: top;
+    }
+    .feedback {
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body onload="initializeChunk()">
+  <div class="container">
+    <div class="title">Chunks</div>
+    <div class="subtitle" id="subtitle">Unjumble the chunks: Click on Generate exercise.</div>
+    <div class="counter" id="sentenceCounter"></div> <!-- Counter container -->
+    <br>
+    <!-- Hidden elements for English and French sentences -->
+    <div id="englishSentences" class="hide">
+      <div class="english-sentence">1I make up at seven o'clock.</div>
+      <div class="english-sentence">2I had a shower in the morning.</div>
+      <div class="english-sentence">3I went to work by car.</div>
+      <div class="english-sentence">4I make up at seven o'clock4.</div>
+      <div class="english-sentence">5I had a shower in the morning5.</div>
+      <div class="english-sentence">6I travel by car6.</div>
+      <div class="english-sentence">7I make up at seven o'clock.</div>
+      <div class="english-sentence">8I had a shower in the morning.</div>
+      <div class="english-sentence">9I went to work by car.</div>
+      <div class="english-sentence">10I make up at seven o'clock.</div>
+      <div class="english-sentence">11I had a shower in the morning.</div>
+      <div class="english-sentence">12I went to work by car.</div>
+      <!-- Add more sentences here as needed -->
+    </div>
+    <div id="frenchSentences" class="hide">
+      <div class="french-sentence">Je me suis levé à sept heures.</div>
+      <div class="french-sentence">J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">Je suis allé au travail en voiture.</div>
+      <div class="french-sentence">4Je me suis levé à sept heures.</div>
+      <div class="french-sentence">5J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">6Je voyage en voiture.</div>
+      <div class="french-sentence">7Je me suis levé à sept heures.</div>
+      <div class="french-sentence">8J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">9Je suis allé au travail en voiture.</div>
+      <div class="french-sentence">10Je me suis levé à sept heures.</div>
+      <div class="french-sentence">11J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">12Je suis allé au travail en voiture.</div>
+      <!-- Add more sentences here as needed -->
+    </div>
+    <!-- End of hidden elements -->
+
+    <div id="exerciseOutput" class="hide"></div>
+    <div class="dropzone-container hide" id="dropZones"></div>
+    <div id="feedback" class="hide"></div>
+    <div class="input-container">
+      <button id="generateButtonChunk" class="hide" onclick="generateChunk()">Generate Exercise</button>
+      <button id="nextButton" class="hide" onclick="nextText()">Next</button>
+      <button id="resetButton" class="hide" onclick="resetActivity()">Restart</button>
+      <br>
+    </div>
+  </div>
+<script>
+    var currentTextIndex = 0;
+    var originalChunks = [];
+    var currentChunkIndex = 0;
+    var selectedEnglishSentences = [];
+   selectedFrenchSentences = [];
+
+function initializeChunk() {
+    document.getElementById('subtitle').classList.remove('hide');
+    selectRandomSentences();
+    document.getElementById('generateButtonChunk').classList.remove('hide');
+}
+
+var usedIndices = [];
+
+function selectRandomSentences() {
+    var englishSentences = document.querySelectorAll('.english-sentence');
+    var frenchSentences = document.querySelectorAll('.french-sentence');
+
+    var remainingIndices = Array.from(Array(englishSentences.length).keys()).filter(index => !usedIndices.includes(index));
+
+    if (remainingIndices.length < 10) {
+        usedIndices = [];
+    }
+
+    var sentenceIndices = shuffleArray(remainingIndices);
+    var selectedIndices = sentenceIndices.slice(0, 10);
+
+    selectedEnglishSentences = selectedIndices.map(index => englishSentences[index]);
+    selectedFrenchSentences = selectedIndices.map(index => frenchSentences[index]);
+
+    usedIndices = usedIndices.concat(selectedIndices);
+}
+
+function generateChunk() {
+    var englishSentence = selectedEnglishSentences[currentTextIndex].textContent;
+    var frenchSentence = selectedFrenchSentences[currentTextIndex].textContent;
+    originalChunks = getWordChunks(frenchSentence);
+
+    var shuffledChunks = shuffleArray([...originalChunks]);
+
+    var exerciseOutput = document.getElementById('exerciseOutput');
+    exerciseOutput.innerHTML = '';
+
+    var englishSentenceDiv = document.createElement('div');
+    englishSentenceDiv.classList.add('english-sentence');
+    englishSentenceDiv.textContent = englishSentence;
+    exerciseOutput.appendChild(englishSentenceDiv);
+
+    var chunkContainer = document.createElement('div');
+    chunkContainer.classList.add('chunk-container');
+    exerciseOutput.appendChild(chunkContainer);
+
+    for (var i = 0; i < shuffledChunks.length; i++) {
+        var chunk = shuffledChunks[i].join(' ');
+        var chunkElement = document.createElement('div');
+        chunkElement.textContent = chunk;
+        chunkElement.classList.add('draggable-word');
+        chunkElement.setAttribute('onclick', 'selectChunk(this)');
+        chunkContainer.appendChild(chunkElement);
+    }
+
+    var dropZones = document.getElementById('dropZones');
+    dropZones.innerHTML = '';
+    for (var i = 0; i < originalChunks.length; i++) {
+        var dropZone = document.createElement('div');
+        dropZone.classList.add('dropzone');
+        dropZones.appendChild(dropZone);
+    }
+
+    exerciseOutput.classList.remove('hide');
+    dropZones.classList.remove('hide');
+    document.getElementById('feedback').classList.add('hide');
+    document.getElementById('nextButton').classList.add('hide');
+    currentChunkIndex = 0;
+    document.getElementById('generateButtonChunk').classList.add('hide');
+
+    // Update the sentence counter
+    document.getElementById('sentenceCounter').textContent = (currentTextIndex + 1) + '/10';
+}
+
+function nextText() {
+    currentTextIndex = (currentTextIndex + 1) % 10;
+    if (currentTextIndex === 0) {
+        resetActivity(); // Reset the activity after completing all sentences
+    } else {
+        generateChunk();
+    }
+}
+
+function resetActivity() {
+    currentTextIndex = 0;
+    selectRandomSentences(); // Select new sentences after completing the game
+    generateChunk();
+    document.getElementById('nextButton').textContent = 'Next';
+    document.getElementById('resetButton').classList.add('hide');
+}
+
+function getWordChunks(text) {
+    var words = text.split(/\s+/).filter(Boolean);
+    var chunks = [];
+    for (var i = 0; i < words.length; i++) {
+        chunks.push([words[i]]);
+    }
+    return chunks;
+}
+
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
+
+function selectChunk(element) {
+    var chunkText = element.textContent;
+    var chunkWords = chunkText.split(/\s+/).filter(Boolean);
+    var correctChunk = originalChunks[currentChunkIndex].join(' ');
+
+    if (chunkWords.join(' ') === correctChunk) {
+        var dropZones = document.getElementById('dropZones');
+        var dropZone = dropZones.children[currentChunkIndex];
+        dropZone.textContent = chunkText;
+        dropZone.classList.add('correct-chunk');
+        element.remove();
+        currentChunkIndex++;
+        if (currentChunkIndex === originalChunks.length) {
+            var feedbackElement = document.getElementById('feedback');
+            feedbackElement.textContent = 'All chunks are in the correct order!';
+            feedbackElement.classList.remove('hide');
+            feedbackElement.classList.add('feedback');
+
+            if (currentTextIndex < 9) {
+                document.getElementById('nextButton').classList.remove('hide');
+            } else {
+                document.getElementById('resetButton').classList.remove('hide');
+            }
+        }
+    } else {
+        element.classList.add('wrong-chunk');
+        setTimeout(() => {
+            element.classList.remove('wrong-chunk');
+        }, 2000);
+    }
+}
+</script>
+
+</body>
+</html>
+
