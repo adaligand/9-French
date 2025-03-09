@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcards</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: transparent;
+      font-family: Arial, sans-serif;
+      flex-direction: column;
+    }
+    .flashcard-container {
+      perspective: 1000px;
+      margin-bottom: 20px;
+    }
+    .flashcard {
+      width: 500px;
+      height: 300px;
+      background-color: white;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 50px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+    }
+    .flipped {
+      transform: rotateY(180deg);
+    }
+    .flashcard .front, .flashcard .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+    }
+    .flashcard .back {
+      background-color: #c5dde96e;
+      transform: rotateY(180deg);
+    }
+    .button-container {
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      margin: 2px;
+      background-color: #10148;
+      color: #000000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 24px;
+    }
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    #englishSentences, #frenchSentences {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="flashcard-container">
+    <div class="flashcard" onclick="flipCard()">
+      <div class="front" id="frontText">Loading...</div>
+      <div class="back" id="backText">Loading...</div>
+    </div>
+  </div>
+  <div class="button-container">
+    <button id="prevButton" onclick="prevCard()" disabled>Previous</button>
+    <button id="nextButton" onclick="nextCard()">Next</button>
+  </div>
+
+  <div id="englishSentences" class="hide">
+    <div class="english-sentence">English</div>
+    <div class="english-sentence">German</div>
+    <div class="english-sentence">Spanish</div>
+    <div class="english-sentence">French</div>
+    <div class="english-sentence">Sports</div>
+  </div>
+
+  <div id="frenchSentences" class="hide">
+    <div class="french-sentence">L'anglais</div>
+    <div class="french-sentence">L'allemand</div>
+    <div class="french-sentence">L'espagnol</div>
+    <div class="french-sentence">Le français</div>
+    <div class="french-sentence">Le sport</div>
+  </div>
+
+  <script>
+    var currentIndex = 0;
+    var englishWords = [];
+    var translations = [];
+
+    function loadSentences() {
+      let englishElements = document.querySelectorAll('#englishSentences .english-sentence');
+      let frenchElements = document.querySelectorAll('#frenchSentences .french-sentence');
+      englishWords = Array.from(englishElements).map(e => e.textContent);
+      translations = Array.from(frenchElements).map(e => e.textContent);
+    }
+
+    function updateCard() {
+      document.getElementById('frontText').textContent = translations[currentIndex];
+      document.getElementById('backText').textContent = englishWords[currentIndex];
+      document.querySelector('.flashcard').classList.remove('flipped');
+      document.getElementById('prevButton').disabled = currentIndex === 0;
+      document.getElementById('nextButton').disabled = currentIndex === englishWords.length - 1;
+    }
+
+    function flipCard() {
+      document.querySelector('.flashcard').classList.toggle('flipped');
+    }
+
+    function prevCard() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCard();
+      }
+    }
+
+    function nextCard() {
+      if (currentIndex < englishWords.length - 1) {
+        currentIndex++;
+        updateCard();
+      }
+    }
+
+    loadSentences();
+    updateCard();
+  </script>
+</body>
+</html>
