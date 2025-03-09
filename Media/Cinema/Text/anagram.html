@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anagram</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 50px;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .title {
+            font-size: 40px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            border: 2px solid #ccc;
+            color: #000000;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-4px);
+        }
+        
+        .englishText-box {
+            margin-bottom: 10px;
+            font-size: 20px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            text-align: justify;
+            width: 100%;
+            box-sizing: border-box;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .letter-container {
+            text-align: center;
+        }
+
+        .anagram-letter {
+            cursor: pointer;
+            padding: 5px 10px;
+            margin: 0 5px;
+            font-size: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .game-container {
+            margin-top: 20px;
+            font-size: 18px;
+            padding: 5px;
+            text-align: justify;
+            display: inline-block;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .frenchText {
+            text-align: left;
+            font-weight: normal;
+            font-size: 22px;
+        }
+
+        .inserted-letter {
+            font-weight: normal;
+        }
+        
+        .anagram-letter:hover {
+            background-color: #f0f0f0;
+        }
+
+         .hide {
+display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Anagramor</div>
+        <div class="subtitle">Unjumble the words.</div>
+        
+        <div class="exercise-box">
+            <div id="text-rebuild-mid-outer" class="activity-borders rounded h-100">
+                <div id="text-rebuild-scrollable" class="pr-2">
+                    <div id="text-rebuild-div" class="pb-1">
+                         
+   <div class="englishText-box">
+      <div id="englishText">I got up at seven o'clock and I had a shower in the bathroom. I had breakfast in the kitchen, and then I cleaned my teeth. I left the house at eight o'clock to go to school. I took the bus, and I arrived at school at a quarter to nine. I had lunch in the canteen at one o'clock. I left school at half past three and I went home by bus. I got home at about four o'clock. I watched a bit of TV, then I had dinner at six o'clock. After dinner I did my homework, I read for a bit and I listened to the radio. Then at ten o'clock I had a wash and I went to bed.</div>
+    </div>
+    <div id="frenchText" class="hide">Je me suis levé à sept heures et je me suis douché dans la salle de bains. J'ai pris le petit déjeuner dans la cuisine, et puis je me suis brossé les dents. J'ai quitté la maison à huit heures pour aller au collège. J'ai pris le bus, et je suis arrivé au collège à neuf heures moins le quart. J'ai pris le déjeuner à la cantine à une heure. J'ai quitté le collège à trois heures et demie et je suis rentré en bus. Je suis arrivé chez moi vers quatre heures. J'ai regardé un peu la télé, puis j'ai pris le dîner à six heures. Après le dîner, j'ai fait mes devoirs, j'ai lu un peu et j'ai écouté la radio. Puis, à dix heures, je me suis lavé et je me suis couché.</div>
+  
+                            <button id="generate-btn">Generate Exercise</button>
+                            <div class="letter-container hide" id="letter-container">
+                                <h2 class="frenchText" id="anagram"></h2>
+                                <div id="letter-buttons"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <script>
+        // Your existing JavaScript code continues from here
+
+        const englishSentence = document.getElementById("englishText").textContent.trim();
+        const frenchSentence = document.getElementById("frenchText").textContent.trim();
+        let currentWordIndex = 0;
+        let currentWordAnagram = '';
+
+        // Function to run on window load
+        window.onload = function() {
+            // Display English text
+            document.getElementById("englishText").textContent = englishSentence;
+        };
+
+        // Event listener for the "Generate Exercise" button
+        document.getElementById("generate-btn").addEventListener("click", function() {
+            document.getElementById("letter-container").classList.remove("hide");
+            currentWordIndex = 0; // Reset currentWordIndex
+            currentWordAnagram = '*'.repeat(frenchSentence.match(/[\wÀ-ÿ]+|[^\s\wÀ-ÿ]/g)[currentWordIndex].replace(/[^\p{L}]/ug, "").length); // Reset currentWordAnagram
+            displayAnagram();
+        });
+
+        // Function to display the anagram and clickable letters
+        function displayAnagram() {
+            const anagramContainer = document.getElementById("anagram");
+            const letterButtonsContainer = document.getElementById("letter-buttons");
+            const words = frenchSentence.match(/[\wÀ-ÿ]+|[^\s\wÀ-ÿ]/g); // Split by letters and keep punctuation marks
+
+            let fullAnagram = '';
+            for (let i = 0; i < words.length; i++) {
+                const word =                    words[i];
+                if (/[^\p{L}\s]/u.test(word)) { // If it's a punctuation mark
+                    fullAnagram += word;
+                    continue;
+                }
+                const wordWithoutPunctuation = word.replace(/[^\p{L}]/ug, ""); // Remove punctuation
+                if (i !== 0 && !/[^\p{L}\s]/u.test(words[i - 1])) { // If the previous word is not punctuation
+                    fullAnagram += ' ';
+                }
+                if (i < currentWordIndex) {
+                    fullAnagram += word;
+                } else if (i === currentWordIndex) {
+                    fullAnagram += currentWordAnagram;
+                } else {
+                    fullAnagram += '<span class="inserted-letter">' + '*'.repeat(wordWithoutPunctuation.length) + '</span>';
+                }
+            }
+            anagramContainer.innerHTML = fullAnagram;
+
+            letterButtonsContainer.innerHTML = '';
+
+            // Display clickable letter buttons
+            const clickableLetters = shuffleArray(words[currentWordIndex].replace(/[^\p{L}]/ug, "").split('')); // Remove punctuation
+            for (let letter of clickableLetters) {
+                const button = document.createElement("button");
+                button.textContent = letter;
+                button.classList.add("anagram-letter");
+                button.addEventListener("click", function() {
+                    revealLetter(letter, button);
+                });
+                letterButtonsContainer.appendChild(button);
+            }
+
+            // Check if all letters have been placed
+            if (!fullAnagram.includes('*')) {
+                alert("Congratulations! You solved the anagram.");
+            }
+        }
+
+        function revealLetter(letter, button) {
+            const words = frenchSentence.match(/[\wÀ-ÿ]+|[^\s\wÀ-ÿ]/g); // Split by letters and keep punctuation marks
+            const word = words[currentWordIndex];
+            if (/[^\p{L}\s]/u.test(word)) { // If it's a punctuation mark
+                alert("Punctuation marks are not clickable.");
+                return;
+            }
+            const wordWithoutPunctuation = word.replace(/[^\p{L}]/ug, ""); // Remove punctuation
+            const indexToReplace = currentWordAnagram.indexOf('*');
+            if (letter === wordWithoutPunctuation[indexToReplace]) {
+                currentWordAnagram = currentWordAnagram.substring(0, indexToReplace) + letter + currentWordAnagram.substring(indexToReplace + 1);
+                displayAnagram();
+                if (!currentWordAnagram.includes('*')) {
+                    currentWordIndex++;
+                    while (currentWordIndex < words.length && /[^\p{L}\s]/u.test(words[currentWordIndex])) {
+                        currentWordIndex++; // Skip punctuation marks
+                    }
+                    if (currentWordIndex < words.length) {
+                        currentWordAnagram = '*'.repeat(words[currentWordIndex].replace(/[^\p{L}]/ug, "").length); // Remove punctuation
+                        displayAnagram();
+                    } else {
+                        alert("Congratulations! You solved the anagram.");
+                    }
+                }
+
+                button.remove(); // Remove the clicked button
+            } else {
+                alert("Incorrect order of letters.");
+            }
+        }
+
+        // Function to handle keyboard input
+        document.addEventListener("keydown", function(event) {
+            const key = event.key.toLowerCase();
+            const letterButtons = document.querySelectorAll(".anagram-letter");
+            letterButtons.forEach(function(button) {
+                if (button.textContent.toLowerCase() === key) {
+                    revealLetter(button.textContent, button);
+                }
+            });
+        });
+
+        // Function to shuffle array elements
+        function shuffleArray(array) {
+            const shuffledArray = array.slice();
+            for (let i = shuffledArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+            }
+            return shuffledArray;
+        }
+    </script>
+</body>
+</html>
+
