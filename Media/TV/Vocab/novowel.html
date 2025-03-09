@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No vowels</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    .title {
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .subtitle {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .counter {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      font-size: 20px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #f9f9f9;
+      border: 2px solid #ccc;
+      color: #000000;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    .hide {
+      display: none;
+    }
+    .english-sentence {
+      margin-bottom: 20px;
+      font-size: 20px;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+      text-align: center;
+    }
+    .french-sentence {
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+    .missing-word {
+      width: 10px; /* Adjusted width */
+      padding: 0px;
+      font-size: 20px;
+      border: none; /* Remove the border */
+      border-bottom: 0.5px solid #000000; /* Adjusted border width */
+      background-color: transparent; /* Make the background transparent */
+      outline: none; /* Remove the outline */
+      margin-right: 2px; /* Add a margin between input boxes */
+      text-align: center; /* Center the text horizontally */
+    }
+    .correct {
+      background-color: #cef4ce;
+    }
+    .incorrect {
+      background-color: #ffb6c19c;
+    }
+    .feedback {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    #keyboardContainer {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .keyboard-button {
+      font-size: 18px;
+      padding: 10px 15px;
+      margin: 2px;
+      border: none;
+      border-radius: 10px;
+      background-color: #10148;
+      color: #000000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .keyboard-button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    select {
+      width: 20%;
+      padding: 5px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      height: 35px;
+    }
+  </style>
+</head>
+<body onload="initializeChunk()">
+  <div class="container">
+    <div class="title">Vowelator</div>
+    <div class="subtitle" id="subtitle">Fill in the sentence with the correct vowels : Click on Generate exercise.</div>
+    <div class="counter" id="sentenceCounter"></div> <!-- Counter container -->
+    <br>
+    <!-- Hidden elements for English and French sentences -->
+    <div id="englishSentences" class="hide">
+      <div class="english-sentence">1I make up at seven o'clock.</div>
+      <div class="english-sentence">2I had a shower in the morning.</div>
+      <div class="english-sentence">3I went to work by car.</div>
+      <div class="english-sentence">4I make up at seven o'clock.</div>
+      <div class="english-sentence">5I had a shower in the morning.</div>
+      <div class="english-sentence">6I travel by car.</div>
+      <div class="english-sentence">7I make up at seven o'clock.</div>
+      <div class="english-sentence">8I had a shower in the morning.</div>
+      <div class="english-sentence">9I went to work by car.</div>
+      <div class="english-sentence">10I make up at seven o'clock.</div>
+    </div>
+    <div id="frenchSentences" class="hide">
+      <div class="french-sentence">1Jé mé suéis levé à sépt héures.</div>
+      <div class="french-sentence">2J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">3Je suis allé au travail en voiture.</div>
+      <div class="french-sentence">4Je me suis levé à sept heures.</div>
+      <div class="french-sentence">5J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">6Je voyage en voiture.</div>
+      <div class="french-sentence">7Je me suis levé à sept heures.</div>
+            <div class="french-sentence">8J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">9Je suis allé au travail en voiture.</div>
+      <div class="french-sentence">10Je me suis levé à sept heures.</div>
+    </div>
+    <!-- End of hidden elements -->
+
+    <div id="exerciseOutput" class="hide"></div>
+    
+    <div class="input-container">
+      <button id="generateButtonChunk" class="hide" onclick="generateChunk()">Generate Exercise</button>
+      <select id="languageSelect" onchange="generateKeyboard(this.value)">
+        <option value="french" selected>French</option>
+        <option value="german">German</option>
+        <option value="spanish">Spanish</option>
+      </select>
+      <div id="feedback" class="hide"></div>
+      <button id="resetButton" class="hide" onclick="resetActivity()">Restart</button>
+            <button id="nextButton" class="hide" onclick="nextText()">Next</button>
+      <br>
+      <div id="keyboardContainer"></div>
+    </div>
+  </div>
+  <script>
+    var currentTextIndex = 0;
+    var sentencePairs = [];
+    var lastFocusedInput = null;
+    var vowels = ['a', 'e', 'i', 'o', 'u', 'à', 'â', 'ä', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ô', 'ö', 'ù', 'ü', 'û', 'á', 'é', 'í', 'ó', 'ú'];
+
+    function initializeChunk() {
+      document.getElementById('subtitle').classList.remove('hide');
+      generateSentencePairs();
+      document.getElementById('generateButtonChunk').classList.remove('hide');
+      generateKeyboard('french');
+    }
+
+    function generateSentencePairs() {
+      var englishSentences = document.querySelectorAll('.english-sentence');
+      var frenchSentences = document.querySelectorAll('.french-sentence');
+
+      for (var i = 0; i < englishSentences.length; i++) {
+        sentencePairs.push({
+          english: englishSentences[i].textContent.trim(),
+          french: frenchSentences[i].textContent.trim()
+        });
+      }
+
+      shuffleArray(sentencePairs);
+    }
+
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+function insertCharacter(character) {
+  if (lastFocusedInput) {
+    var cursorPosition = lastFocusedInput.selectionStart;
+    var currentValue = lastFocusedInput.value;
+    var newValue = currentValue.slice(0, cursorPosition) + character + currentValue.slice(cursorPosition);
+    lastFocusedInput.value = newValue;
+    lastFocusedInput.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
+
+    // Check the filled input box against the original French sentence
+    validateCharacter(lastFocusedInput);
+  }
+}
+
+    function generateKeyboard(language) {
+      var keyboardContainer = document.getElementById('keyboardContainer');
+      keyboardContainer.innerHTML = '';
+      var characters = [];
+      switch (language) {
+        case 'german':
+          characters = ['ä', 'ö', 'ü', 'ß'];
+          break;
+        case 'french':
+          characters = ['à', 'â', 'ä', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ô', 'ö', 'ù', 'ü', 'û', 'ç'];
+          break;
+        case 'spanish':
+          characters = ['á', 'é', 'í', 'ó', 'ú', 'ñ'];
+          break;
+      }
+      characters.forEach(function (character) {
+        var button = document.createElement('button');
+        button.innerHTML = character;
+        button.className = 'keyboard-button';
+        button.setAttribute('type', 'button');
+        button.addEventListener('click', function(event) {
+          event.preventDefault();
+          insertCharacter(character);
+        });
+        keyboardContainer.appendChild(button);
+      });
+    }
+
+    function generateChunk() {
+      var englishSentence = sentencePairs[currentTextIndex].english;
+      var frenchSentence = sentencePairs[currentTextIndex].french;
+      var vowelsRemovedSentence = removeVowels(frenchSentence);
+
+      var sentenceWithInputFields = '';
+
+      for (var i = 0; i < frenchSentence.length; i++) {
+        var char = frenchSentence[i];
+        if (vowels.includes(char.toLowerCase())) {
+          // If the character is a vowel, add an input box
+          sentenceWithInputFields += `<input type="text" class="missing-word" data-index="${i}" oninput="validateCharacter(this)" onfocus="setLastFocusedInput(this)" onkeydown="submitOnEnter(event, this)" style="width: 15px;">`;
+        } else {
+          // Otherwise, add the character as it is
+          sentenceWithInputFields += char;
+        }
+      }
+
+      var exerciseOutput = document.getElementById('exerciseOutput');
+      exerciseOutput.innerHTML = '';
+
+      var englishSentenceDiv = document.createElement('div');
+      englishSentenceDiv.classList.add('english-sentence');
+      englishSentenceDiv.textContent = englishSentence;
+      exerciseOutput.appendChild(englishSentenceDiv);
+
+      var sentenceDiv = document.createElement('div');
+      sentenceDiv.classList.add('french-sentence');
+      sentenceDiv.innerHTML = sentenceWithInputFields;
+      exerciseOutput.appendChild(sentenceDiv);
+      exerciseOutput.classList.remove('hide');
+      document.getElementById('feedback').classList.add('hide');
+      document.getElementById('resetButton').classList.add('hide');
+      document.getElementById('generateButtonChunk').classList.add('hide');
+      document.getElementById('nextButton').classList.add('hide');
+
+      document.getElementById('sentenceCounter').textContent = (currentTextIndex + 1) + '/10';
+    }
+
+    function removeVowels(sentence) {
+      return sentence.replace(/[aeiouàâäéèêëîïôöùüû]/ig, '');
+    }
+
+    function setLastFocusedInput(input) {
+      lastFocusedInput = input;
+    }
+
+    function adjustInputWidth(input) {
+      var minWidth = 20;
+      var expansionFactor = 10;
+      var newWidth = Math.max(minWidth, (input.value.length + 1) * expansionFactor);
+      input.style.width = newWidth + 'px';
+    }
+
+    function nextText() {
+      currentTextIndex = (currentTextIndex + 1) % 10;
+      if (currentTextIndex === 0) {
+        resetActivity();
+      } else {
+        generateChunk();
+      }
+    }
+
+    function submitOnEnter(event, input) {
+      if (event.keyCode === 13) {
+        jumpToNextInput(input);
+        event.preventDefault();
+      } else if (event.keyCode === 8 && input.value === '') {
+        jumpToPreviousInput(input);
+        event.preventDefault();
+      }
+    }
+
+    function jumpToNextInput(input) {
+      var nextInput = input.nextElementSibling;
+      if (nextInput && nextInput.classList.contains('missing-word')) {
+        nextInput.focus();
+      }
+    }
+
+    function jumpToPreviousInput(input) {
+      var previousInput = input.previousElementSibling;
+      if  (previousInput && previousInput.classList.contains('missing-word')) {
+        previousInput.focus();
+        previousInput.value = ''; // Empty the content
+        previousInput.classList.remove('correct', 'incorrect'); // Remove background color
+      }
+    }
+
+    function resetActivity() {
+      currentTextIndex = 0;
+      shuffleArray(sentencePairs);
+      generateChunk();
+    }
+
+    function getWordChunks(text) {
+      return text.split(/([\wÀ-ÿ'-]+)/g);
+    }
+
+    function isVowel(char) {
+      return vowels.includes(char.toLowerCase());
+    }
+
+    function validateCharacter(input) {
+      var userInput = input.value.trim().toLowerCase();
+      if (userInput === '') {
+        input.classList.remove('correct', 'incorrect');
+      } else {
+        var correctChar = sentencePairs[currentTextIndex].french[input.getAttribute('data-index')];
+        if (userInput === correctChar.toLowerCase()) {
+          input.classList.remove('incorrect');
+          input.classList.add('correct');
+        } else {
+          input.classList.remove('correct');
+          input.classList.add('incorrect');
+        }
+      }
+
+      // Move the focus to the next input box
+      var nextInput = input.nextElementSibling;
+      if (nextInput && nextInput.classList.contains('missing-word')) {
+        nextInput.focus();
+      }
+
+      checkAnswers();
+    }
+
+    function checkAnswers() {
+      var inputFields = document.querySelectorAll('.missing-word');
+      var allCorrect = true;
+
+      inputFields.forEach(function(input) {
+        if (!input.classList.contains('correct')) {
+          allCorrect = false;
+        }
+      });
+
+      if (allCorrect) {
+        if (currentTextIndex === 9) {
+          document.getElementById('resetButton').classList.remove('hide');
+        } else {
+          document.getElementById('nextButton').classList.remove('hide');
+        }
+      }
+    }
+  </script>
+</body>
+</html>
+
