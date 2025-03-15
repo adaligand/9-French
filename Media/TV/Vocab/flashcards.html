@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>French Flashcards</title>
   <style>
-    body {
+      body {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -33,10 +34,9 @@
       text-align: center;
       transform-style: preserve-3d;
       transition: transform 0.6s;
+      position: relative;
     }
-    .flipped {
-      transform: rotateY(180deg);
-    }
+    .flipped { transform: rotateY(180deg); }
     .flashcard .front, .flashcard .back {
       position: absolute;
       width: 100%;
@@ -47,32 +47,101 @@
       align-items: center;
       border-radius: 10px;
     }
-    .flashcard .back {
-      background-color: #c5dde96e;
-      transform: rotateY(180deg);
-    }
-    .button-container {
-      display: flex;
+    .flashcard .back { background-color: #c5dde96e; transform: rotateY(180deg); }
+    .button-container { display: flex; gap: 10px; margin-top: 10px; }
+    .quiz-container, .text-input-container, .reset-container { display: none; margin-top: 20px; text-align: center; }
+    button { padding: 10px 15px; background-color: #f9f9f9; color: #000000; border: 2px solid #ccc; border-radius: 10px; cursor: pointer; font-size: 24px; }
+    button:hover { background-color: #A9A9A9; transform: translateY(-4px); }
+    .hidden { display: none; }
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
+      margin-top: 20px;
     }
-    button {
-      padding: 10px 15px;
-      margin: 2px;
-      background-color: #10148;
-      color: #000000;
-      border: none;
+    .quiz-options button {
+      width: 200px;
+      height: 100px;
+      font-size: 20px;
+    }
+    input {
+      font-size: 20px;
+      padding: 10px;
       border-radius: 10px;
-      cursor: pointer;
-      font-size: 24px;
+      transition: border-color 0.3s;
     }
-    button:hover {
-      background-color: #A9A9A9;
-      transform: translateY(-4px);
+    input.error {
+      border-color: red;
+      background-color: #f8d7da;
     }
-    #englishSentences, #frenchSentences {
-      display: none;
+    input.correct {
+      border-color: green;
+      background-color: #d4edda;
     }
+  .congratulations {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 20px;
+  color: green;
+  text-align: center;
+}
+
+.restart-button {
+  padding: 10px 15px;
+  background-color: #f9f9f9;
+  color: #000000;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 24px;
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.restart-button:hover {
+  background-color: #A9A9A9;
+  transform: translateY(-4px);
+}
+
+/* Styling for keyboard buttons */
+.keyboard-button {
+  font-size: 18px;
+  padding: 10px; /* Adjust padding to make buttons square */
+  margin: 2px;
+  border: none;
+  border-radius: 10px;
+  background-color: #10148;
+  color: #000000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s, transform 0.2s;
+  width: 40px;  /* Set width and height to the same size */
+  height: 40px;
+  display: inline-block;
+}
+
+.keyboard-button:hover {
+  background-color: #A9A9A9;
+  transform: translateY(-4px);
+}
+
+/* Style for the container to display the keyboard in a row */
+.keyboard-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  justify-content: center;
+  margin-top: 20px;
+}
+select {
+      width: 20%;
+      padding: 5px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      height: 35px;
+    }
+
   </style>
+
 </head>
 <body>
   <div class="flashcard-container">
@@ -82,98 +151,322 @@
     </div>
   </div>
   <div class="button-container">
-    <button id="prevButton" onclick="prevCard()" disabled>Previous</button>
-    <button id="nextButton" onclick="nextCard()">Next</button>
+    <button onclick="previousStep()" id="previousButton" class="hidden">Previous</button>
+    <button onclick="nextStep()">Next</button>
   </div>
+  <div class="quiz-container" id="quizContainer"></div>
+  <div class="text-input-container" id="textInputContainer"></div>
+        <br>
+              <br>
+   <select id="languageSelect" class="hidden" onchange="generateKeyboard(this.value)">
+  <option value="french" selected>French</option>
+  <option value="german">German</option>
+  <option value="spanish">Spanish</option>
+</select>
 
-  <div id="englishSentences" class="hide">
-    <div class="english-sentence">the news</div>
-<div class="english-sentence">documentaries</div>
-<div class="english-sentence">music programmes</div>
-<div class="english-sentence">sports programmes</div>
-<div class="english-sentence">reality TV programmes</div>
-<div class="english-sentence">game shows</div>
-<div class="english-sentence">magazine programmes</div>
-<div class="english-sentence">series</div>
-<div class="english-sentence">funny</div>
-<div class="english-sentence">entertaining</div>
-<div class="english-sentence">interesting</div>
-<div class="english-sentence">exciting</div>
-<div class="english-sentence">educational</div>
-<div class="english-sentence">serious</div>
-<div class="english-sentence">boring</div>
-<div class="english-sentence">original</div>
-<div class="english-sentence">exciting</div>
-<div class="english-sentence">captivating</div>
-<div class="english-sentence">fascinating</div>
-<div class="english-sentence">gifted</div>
 
   </div>
-
-  <div id="frenchSentences" class="hide">
-    <div class="french-sentence">les actualités</div>
-<div class="french-sentence">les documentaires</div>
-<div class="french-sentence">les émissions de musique</div>
-<div class="french-sentence">les émissions de sport</div>
-<div class="french-sentence">les émissions de télé-réalité</div>
-<div class="french-sentence">les jeux télévisés</div>
-<div class="french-sentence">les magazines culturels</div>
-<div class="french-sentence">les séries</div>
-<div class="french-sentence">amusants</div>
-<div class="french-sentence">divertissants</div>
-<div class="french-sentence">intéressants</div>
-<div class="french-sentence">passionnants</div>
-<div class="french-sentence">éducatifs</div>
-<div class="french-sentence">sérieux</div>
-<div class="french-sentence">ennuyeux</div>
-<div class="french-sentence">originaux</div>
-<div class="french-sentence">palpitant</div>
-<div class="french-sentence">captivant</div>
-<div class="french-sentence">fascinant</div>
-<div class="french-sentence">doué</div>
-
+  <div class="keyboard-container" id="keyboard"></div>
+  <div class="reset-container">
+    <button onclick="resetExercise()">Restart Exercise</button>
   </div>
+  <div class="congratulations hidden" id="congratulationsMessage"></div>
 
-  <script>
-    var currentIndex = 0;
-    var englishWords = [];
-    var translations = [];
+<script>
+  let currentIndex = 0;
+  let phase = 0; // 0: Flashcards, 1: Multiple Choice, 2: Typing Questions
+  let cycleIndex = 0; // Controls cycles of two (Flashcard → MCQ → Typing)
 
-    function loadSentences() {
-      let englishElements = document.querySelectorAll('#englishSentences .english-sentence');
-      let frenchElements = document.querySelectorAll('#frenchSentences .french-sentence');
-      englishWords = Array.from(englishElements).map(e => e.textContent);
-      translations = Array.from(frenchElements).map(e => e.textContent);
-    }
+  let englishWords = [
+"the news",
+"documentaries",
+"music programmes",
+"sports programmes",
+"reality TV programmes",
+"game shows",
+"magazine programmes",
+"series",
+"funny",
+"entertaining",
+"interesting",
+"exciting",
+"educational",
+"serious",
+"boring",
+"original",
+"exciting",
+"captivating",
+"fascinating",
+"gifted"
 
-    function updateCard() {
+  ];
+  let translations = [
+"les actualités",
+"les documentaires",
+"les émissions de musique",
+"les émissions de sport",
+"les émissions de télé-réalité",
+"les jeux télévisés",
+"les magazines culturels",
+"les séries",
+"amusants",
+"divertissants",
+"intéressants",
+"passionnants",
+"éducatifs",
+"sérieux",
+"ennuyeux",
+"originaux",
+"palpitant",
+"captivant",
+"fascinant",
+"doué"
+
+  ];
+
+  function updateCard() {
+    if (currentIndex < englishWords.length) {
       document.getElementById('frontText').textContent = translations[currentIndex];
       document.getElementById('backText').textContent = englishWords[currentIndex];
       document.querySelector('.flashcard').classList.remove('flipped');
-      document.getElementById('prevButton').disabled = currentIndex === 0;
-      document.getElementById('nextButton').disabled = currentIndex === englishWords.length - 1;
+    } else {
+      showCongratulations();
     }
+  }
 
-    function flipCard() {
-      document.querySelector('.flashcard').classList.toggle('flipped');
-    }
+  function flipCard() {
+    document.querySelector('.flashcard').classList.toggle('flipped');
+  }
 
-    function prevCard() {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updateCard();
-      }
-    }
+function nextStep() {
+  let flashcardContainer = document.querySelector('.flashcard-container');
+  let buttonContainer = document.querySelector('.button-container');
+  let quizContainer = document.getElementById('quizContainer');
+  let textInputContainer = document.getElementById('textInputContainer');
+  let previousButton = document.getElementById('previousButton');
+  let keyboardContainer = document.getElementById('keyboard');
 
-    function nextCard() {
-      if (currentIndex < englishWords.length - 1) {
+  flashcardContainer.style.display = 'none';
+  quizContainer.style.display = 'none';
+  textInputContainer.style.display = 'none';
+  buttonContainer.style.display = 'none';
+  previousButton.classList.add('hidden');
+  keyboardContainer.style.display = 'none'; // Hide keyboard by default
+  document.getElementById('languageSelect').classList.add('hidden'); // Hide dropdown when not in use
+
+  if (currentIndex < englishWords.length) {
+    if (phase === 0) {
+      flashcardContainer.style.display = 'block';
+      buttonContainer.style.display = 'flex';
+      updateCard();
+      if (currentIndex % 2 === 1) {
+        phase = 1;
+        currentIndex = cycleIndex * 2;
+      } else {
         currentIndex++;
-        updateCard();
+      }
+      previousButton.classList.remove('hidden');
+    } else if (phase === 1) {
+      quizContainer.style.display = 'block';
+      showQuiz();
+      if (currentIndex % 2 === 1) {
+        phase = 2;
+        currentIndex = cycleIndex * 2;
+      } else {
+        currentIndex++;
+      }
+    } else if (phase === 2) {
+      textInputContainer.style.display = 'block';
+      showTextInput();
+      if (currentIndex === englishWords.length - 1) {
+        showCongratulations();
+      } else {
+        if (currentIndex % 2 === 1) {
+          cycleIndex++;
+          if (cycleIndex * 2 < englishWords.length) {
+            phase = 0;
+            currentIndex = cycleIndex * 2;
+          } else {
+            showCongratulations();
+          }
+        } else {
+          currentIndex++;
+        }
       }
     }
+  }
+}
 
-    loadSentences();
-    updateCard();
-  </script>
+
+  function previousStep() {
+    if (phase === 0) {
+      currentIndex--;
+      if (currentIndex < 0) currentIndex = 0;
+      updateCard();
+    } else if (phase === 1 || phase === 2) {
+      cycleIndex--;
+      if (cycleIndex < 0) cycleIndex = 0;
+      currentIndex = cycleIndex * 2;
+      phase = 0;
+      updateCard();
+    }
+  }
+
+  function showQuiz() {
+    let quizContainer = document.getElementById('quizContainer');
+    quizContainer.innerHTML = "";
+    quizContainer.style.display = 'block';
+
+    let correctAnswer = translations[currentIndex];
+    let options = shuffle([correctAnswer, ...translations.filter(w => w !== correctAnswer).slice(0, 3)]);
+
+    let div = document.createElement('div');
+    div.innerHTML = `<h3>What is the translation of "${englishWords[currentIndex]}"?</h3>`;
+    let optionsDiv = document.createElement('div');
+    optionsDiv.className = "quiz-options";
+
+    options.forEach(option => {
+      let btn = document.createElement('button');
+      btn.textContent = option;
+      btn.onclick = () => {
+        if (option === correctAnswer) {
+          nextStep();
+        } else {
+          alert('Incorrect! Try again.');
+          currentIndex--;
+          updateCard();
+          phase = 0;
+          nextStep();
+        }
+      };
+      optionsDiv.appendChild(btn);
+    });
+    div.appendChild(optionsDiv);
+    quizContainer.appendChild(div);
+  }
+
+  function showTextInput() {
+  let textInputContainer = document.getElementById('textInputContainer');
+  textInputContainer.innerHTML = "";
+  textInputContainer.style.display = 'block';
+
+  let correctAnswer = translations[currentIndex];
+  textInputContainer.innerHTML = `<h3>Type the translation for "${englishWords[currentIndex]}"</h3>`;
+
+  let input = document.createElement('input');
+  input.type = "text";
+  input.placeholder = "Type here...";
+
+  let submitBtn = document.createElement('button');
+  submitBtn.textContent = "Submit";
+
+  textInputContainer.appendChild(input);
+  textInputContainer.appendChild(submitBtn);
+
+  setTimeout(function() {
+    input.focus();
+  }, 0);
+
+  input.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      submitBtn.click();
+    }
+  });
+
+  submitBtn.onclick = () => {
+    if (input.value.trim().toLowerCase() === correctAnswer.toLowerCase()) {
+      input.classList.remove('error');
+      input.classList.add('correct');
+      nextStep();
+    } else {
+      input.classList.add('error');
+    }
+  };
+
+  // Show the keyboard and dropdown when the input box is displayed
+  document.getElementById('keyboard').style.display = 'flex';
+  document.getElementById('languageSelect').classList.remove('hidden'); // Show dropdown
+}
+
+  
+   
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function updateKeyboard() {
+    const keyboardContainer = document.getElementById('keyboard');
+    keyboardContainer.innerHTML = '';
+    const language = document.getElementById('languageSelect').value;
+    let characters = [];
+
+    switch (language) {
+      case 'german':
+        characters = ['ä', 'ö', 'ü', 'ß'];
+        break;
+      case 'french':
+        characters = ['à', 'â', 'ä', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ô', 'ö', 'ù', 'ü', 'û', 'ç'];
+        break;
+      case 'spanish':
+        characters = ['á', 'é', 'í', 'ó', 'ú', 'ñ'];
+        break;
+    }
+ 
+    characters.forEach(char => {
+      let button = document.createElement('button');
+      button.textContent = char;
+      button.classList.add('keyboard-button');
+      button.onclick = function() {
+        const inputField = document.querySelector('.text-input-container input');
+        if (inputField) {
+          inputField.value += char;
+          inputField.focus();
+        }
+      };
+      keyboardContainer.appendChild(button);
+    });
+  }
+
+  // Ensure the keyboard updates when the language selection changes
+  document.getElementById('languageSelect').addEventListener('change', updateKeyboard);
+
+  // Initialize the keyboard on page load
+  updateKeyboard();
+
+function showCongratulations() {
+  // Hide all unnecessary sections before showing the congratulations message
+  document.querySelector('.flashcard-container').style.display = 'none';
+  document.querySelector('.quiz-container').style.display = 'none';
+  document.querySelector('.text-input-container').style.display = 'none';
+  document.querySelector('.button-container').style.display = 'none';
+  document.getElementById('languageSelect').classList.add('hidden'); // Hide dropdown
+  document.getElementById('keyboard').style.display = 'none'; // Hide keyboard
+
+  // Display the congratulations message and reset button
+  let congratulationsMessage = document.getElementById('congratulationsMessage');
+  congratulationsMessage.classList.remove('hidden');
+  congratulationsMessage.textContent = "Congratulations! You've completed all the exercises!";
+  
+  // Show reset button
+  document.querySelector('.reset-container').style.display = 'block';
+}
+
+  function resetExercise() {
+    currentIndex = 0;
+    cycleIndex = 0;
+    phase = 0;
+    document.getElementById('congratulationsMessage').classList.add('hidden');
+    document.querySelector('.reset-container').style.display = 'none';
+    nextStep();
+  }
+
+  nextStep();
+</script>
+
+
 </body>
 </html>
