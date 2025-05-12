@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Translation</title>
+  <style>
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    .on-screen-title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .hide { display: none; }
+    #textInput { font-size: 24px; padding: 10px; width: 300px;border-radius: 10px; }
+    #checkButton, #nextButton, #resetButton { font-size: 20px; padding: 10px; margin: 5px; cursor: pointer; border-radius: 10px;}
+    #exerciseOutput { font-size: 24px; font-weight: bold; margin: 20px 0; border-radius: 10px; }
+    #keyboardContainer { margin-top: 20px; text-align: center; display: inline-block; }
+    .keyboard-button {
+      font-size: 18px;
+      padding: 10px 15px;
+      margin: 2px;
+      border: none;
+      border-radius: 10px;
+      background-color: #10148;
+      color: #000000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .keyboard-button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    #languageSelect {
+      width: auto;
+      padding: 5px;
+      border-radius: 10px;
+      margin-left: 10px;
+      height: 40px;
+      font-size: 16px;
+    }
+    .keyboard-container-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body onload="initialize()">
+  <div class="container">
+    <div class="on-screen-title">Translate the word</div>
+    <div id="exerciseOutput"></div>
+    <input type="text" id="textInput" autocomplete="off" onkeypress="handleKeyPress(event)">
+    <button id="checkButton" onclick="checkAnswer()">Check</button>
+    <button id="nextButton" class="hide" onclick="nextPhrase()">Next</button>
+    <button id="resetButton" class="hide" onclick="resetExercise()">Reset</button>
+    <div id="feedback"></div>
+    <div class="keyboard-container-wrapper">
+      <div id="keyboardContainer"></div>
+      <select id="languageSelect" onchange="generateKeyboard(this.value)">
+        <option value="french">French</option>
+        <option value="german">German</option>
+        <option value="spanish">Spanish</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="englishSentences" class="hide">
+    <div class="english-sentence">seven</div>
+    <div class="english-sentence">cat</div>
+    <div class="english-sentence">book</div>
+  </div>
+
+  <div id="frenchSentences" class="hide">
+    <div class="french-sentence">sept</div>
+    <div class="french-sentence">chat</div>
+    <div class="french-sentence">livre</div>
+  </div>
+
+  <script>
+    var currentIndex = 0;
+    var englishWords = [];
+    var translations = [];
+
+    function initialize() {
+      loadSentences();
+      generateExercise();
+      generateKeyboard('french');
+      document.getElementById('textInput').focus();
+    }
+
+    function loadSentences() {
+      let englishElements = document.querySelectorAll('#englishSentences .english-sentence');
+      let frenchElements = document.querySelectorAll('#frenchSentences .french-sentence');
+      englishWords = Array.from(englishElements).map(e => e.textContent);
+      translations = Array.from(frenchElements).map(e => e.textContent);
+    }
+
+    function generateExercise() {
+      document.getElementById('exerciseOutput').textContent = englishWords[currentIndex];
+      document.getElementById('textInput').value = '';
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('checkButton').classList.remove('hide');
+      document.getElementById('nextButton').classList.add('hide');
+    }
+
+    function checkAnswer() {
+      var userInput = document.getElementById('textInput').value.trim().toLowerCase();
+      var correctAnswer = translations[currentIndex].toLowerCase();
+
+      if (userInput === correctAnswer) {
+        document.getElementById('feedback').textContent = 'Correct!';
+        document.getElementById('checkButton').classList.add('hide');
+        if (currentIndex < englishWords.length - 1) {
+          document.getElementById('nextButton').classList.remove('hide');
+        } else {
+          document.getElementById('resetButton').classList.remove('hide');
+        }
+      } else {
+        document.getElementById('feedback').textContent = 'Incorrect. Try again.';
+      }
+    }
+
+    function generateKeyboard(language) {
+      var keyboardContainer = document.getElementById('keyboardContainer');
+      keyboardContainer.innerHTML = '';
+      var characters = [];
+      switch (language) {
+        case 'french':
+          characters = ['à', 'â', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ô', 'ö', 'ù', 'ü', 'û', 'ç'];
+          break;
+        case 'german':
+          characters = ['ä', 'ö', 'ü', 'ß'];
+          break;
+        case 'spanish':
+          characters = ['á', 'é', 'í', 'ó', 'ú', 'ñ'];
+          break;
+      }
+      characters.forEach(char => {
+        var button = document.createElement('button');
+        button.innerHTML = char;
+        button.className = 'keyboard-button';
+        button.onclick = () => insertLetter(char);
+        keyboardContainer.appendChild(button);
+      });
+    }
+function nextPhrase() {
+  currentIndex++;
+  if (currentIndex < englishWords.length) {
+    generateExercise();
+  } else {
+    document.getElementById('exerciseOutput').textContent = 'Exercise Completed!';
+    document.getElementById('nextButton').classList.add('hide');
+  }
+}
+
+    function insertLetter(letter) {
+      var input = document.getElementById('textInput');
+      input.value += letter;
+      input.focus();
+    }
+  </script>
+</body>
+</html>
