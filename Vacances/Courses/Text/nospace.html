@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spacetor</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+}
+.container {
+  text-align: justify;
+  margin-top: 10px;
+}
+.title {
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.subtitle {
+  font-size: 18px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.english-text-box {
+      margin-bottom: 20px;
+      font-size: 20px;
+      padding: 10px;
+      border: 2px solid #ccc;
+      text-align: justify;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+    }
+button#generate-btn {
+  margin-top: 20px; /* Add margin-top */
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  border: 2px solid #ccc;
+  color: #000000;
+  border-radius: 10px;
+  cursor: pointer;
+}
+    button {
+      padding: 10px 15px;
+      margin: 2px;
+      background-color: #f9f9f9;
+      color: #000000;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+button:hover {
+  background-color: #A9A9A9;
+  transform: translateY(-4px);
+}
+.exercise-box {
+  font-size: 22px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  text-align: justify;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: none; /* initially hide the exercise box */
+}
+
+.no-spaces {
+  text-align: justify; /* Justify the text */
+}
+.hidden-space {
+  cursor: pointer;
+}
+  .hide {
+display: none;
+        }
+.exercise-box {
+  font-size: 22px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  text-align: justify;
+  margin-top: 5px;
+  text-align: center; /* Add text-align: center; */
+}
+.counter-container {
+    text-align: center;
+    margin: 0;
+    margin-top: 20px;
+}
+
+.counter, .wrong-click, .correct-click, .feedback {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.wrong-click {
+    color: red;
+    font-size: 22px;
+    margin-top: 5px;
+}
+
+.correct-click {
+    color: green;
+    font-size: 22px;
+    margin-top: 5px;
+}
+
+.feedback {
+    color: black; /* Change color as needed */
+}
+
+#counter {
+    color: black; /* Change color as needed */
+}
+
+#correct-clicks {
+    color: green; /* Change color as needed */
+}
+
+#wrong-clicks {
+    color: red; /* Change color as needed */
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Spacetor</div>
+  <div class="subtitle">Click where you want to insert spaces to recreate the correct text.</div>
+  
+   <div class="english-text-box">
+      <div id="englishText">I got up at seven o'clock and I had a shower in the bathroom. I had breakfast in the kitchen, and then I cleaned my teeth. I left the house at eight o'clock to go to school. I took the bus, and I arrived at school at a quarter to nine. I had lunch in the canteen at one o'clock. I left school at half past three and I went home by bus. I got home at about four o'clock. I watched a bit of TV, then I had dinner at six o'clock. After dinner I did my homework, I read for a bit and I listened to the radio. Then at ten o'clock I had a wash and I went to bed.</div>
+    </div>
+    <div id="frenchText" class="hide">Je me suis levé à sept heures et je me suis douché dans la salle de bains. J'ai pris le petit déjeuner dans la cuisine, et puis je me suis brossé les dents. J'ai quitté la maison à huit heures pour aller au collège. J'ai pris le bus, et je suis arrivé au collège à neuf heures moins le quart. J'ai pris le déjeuner à la cantine à une heure. J'ai quitté le collège à trois heures et demie et je suis rentré en bus. Je suis arrivé chez moi vers quatre heures. J'ai regardé un peu la télé, puis j'ai pris le dîner à six heures. Après le dîner, j'ai fait mes devoirs, j'ai lu un peu et j'ai écouté la radio. Puis, à dix heures, je me suis lavé et je me suis couché.</div>
+<button id="generate-btn">Generate Exercise</button>
+
+ <div class="exercise-box">
+<p class="frenchText no-spaces" id="exercise-frenchText"></p>
+            </div>
+            <div class="counter-container">
+                <div class="counter" id="counter" style="margin-bottom: 0px; display: none;">Spaces remaining: 0</div>
+                <div class="feedback" id="feedback"></div>
+                <div class="feedback" id="wrong-clicks" style="display: none;">Wrong clicks: 0</div>
+                <div class="feedback" id="correct-clicks" style="display: none;">Correct clicks: 0</div>
+            </div>
+        </div>
+   <script>
+document.getElementById('generate-btn').addEventListener('click', function() {
+  // Show French text exercise
+  document.querySelector('.exercise-box').style.display = 'block';
+
+  // Reset wrong and correct clicks
+  wrongClicks = [];
+  correctClicks = 0;
+
+  // Get the French text content
+  const frenchText = document.getElementById('frenchText').textContent;
+
+  // Count the number of spaces in the French text
+  const spaceCount = frenchText.split(' ').length - 1;
+
+  // Update counter with the number of spaces
+  document.getElementById('counter').innerText = `Spaces remaining: ${spaceCount}`;
+  document.getElementById('counter').style.display = 'block'; // Show the counter
+
+  // Create HTML with each letter wrapped in a span
+  let hiddenSpaces = 0;
+  const punctuation = ['.', ',', ';', ':', '!', '?'];
+  const html = frenchText.split('').map((char, index, arr) => {
+    if (char === ' ') {
+      // Check if the space is before or after punctuation
+      const prevChar = arr[index - 1];
+      const nextChar = arr[index + 1];
+      if (punctuation.includes(prevChar) || punctuation.includes(nextChar)) {
+        // Always display spaces around punctuation
+        return `<span class='letter-span' data-index='${index}'>&nbsp;</span>`;
+      } else {
+        hiddenSpaces++;
+        return `<span class='space-span' onclick='check_space(this, ${index})'><span class='space-inner' style='display:none'>&nbsp;</span></span>`;
+      }
+    } else {
+      return `<span class='letter-span' data-index='${index}' onclick='check_space(this, ${index})'>${char}</span>`;
+    }
+  }).join('');
+
+  // Display the hidden text
+  document.getElementById('exercise-frenchText').innerHTML = html;
+
+  // Update counter
+  document.getElementById('counter').innerText = `Spaces remaining: ${hiddenSpaces}`;
+
+  // Reset feedback
+  document.getElementById('feedback').innerText = '';
+  document.getElementById('wrong-clicks').innerText = 'Wrong clicks: 0';
+  document.getElementById('correct-clicks').innerText = 'Correct clicks: 0';
+
+  // Show feedback elements
+  document.getElementById('wrong-clicks').style.display = 'block';
+  document.getElementById('correct-clicks').style.display = 'block';
+
+  // Add event listeners to show and hide cursor only when mouse is over the generated text
+  document.getElementById('exercise-frenchText').addEventListener('mouseenter', showCursor);
+  document.getElementById('exercise-frenchText').addEventListener('mouseleave', hideCursor);
+});
+
+function showCursor() {
+  document.getElementById('cursor').style.display = 'block';
+}
+
+function hideCursor() {
+  document.getElementById('cursor').style.display = 'none';
+}
+
+document.addEventListener('mousemove', function(e) {
+  const cursor = document.getElementById('cursor');
+  cursor.style.left = e.pageX + 'px';
+  cursor.style.top = e.pageY - 10 + 'px';
+});
+
+function check_space(element, index) {
+  const prevSibling = element.previousElementSibling;
+  const nextSibling = element.nextElementSibling;
+
+  if (prevSibling && prevSibling.classList.contains('space-span')) {
+    const spaceInner = prevSibling.querySelector('.space-inner');
+    if (spaceInner.style.display === 'none') {
+      spaceInner.style.display = 'inline'; // Reveal previous space
+      updateCounter(-1); // Decrement counter
+      correctClicks++;
+      updateCorrectClicks();
+    }
+  }
+  if (nextSibling && nextSibling.classList.contains('space-span')) {
+    const spaceInner = nextSibling.querySelector('.space-inner');
+    if (spaceInner.style.display === 'none') {
+      spaceInner.style.display = 'inline'; // Reveal next space
+      updateCounter(-1); // Decrement counter
+      correctClicks++;
+      updateCorrectClicks(); // Update correct clicks count
+    }
+  }
+
+  // Check if all spaces have been found
+  if (document.querySelectorAll('.space-inner[style="display:none"]').length === 0) {
+    document.getElementById('feedback').innerText = 'Congratulations! You found all the spaces.';
+  }
+
+  // Check if the clicked element is a wrong place
+  if (!prevSibling || !nextSibling || (!prevSibling.classList.contains('space-span') && !nextSibling.classList.contains('space-span'))) {
+    wrongClicks.push(index);
+    updateWrongClicks();
+    element.classList.add('wrong-click');
+  }
+}
+
+function updateCounter(change) {
+  const counter = document.getElementById('counter');
+  const currentCount = parseInt(counter.innerText.split(':')[1].trim());
+  const newCount = currentCount + change;
+  counter.innerText = `Spaces remaining: ${newCount}`;
+}
+
+function updateWrongClicks() {
+  const wrongClicksElement = document.getElementById('wrong-clicks');
+  wrongClicksElement.innerText = `Wrong clicks: ${wrongClicks.length}`;
+}
+
+function updateCorrectClicks() {
+  const correctClicksElement = document.getElementById('correct-clicks');
+  correctClicksElement.innerText = `Correct clicks: ${correctClicks}`;
+}
+</script>
+
+</body>
+</html>
