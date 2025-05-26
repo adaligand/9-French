@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pyramidor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        /* Add your CSS styles here */
+        #exercise-container {
+            margin: 0 auto;
+            padding: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: transparent; 
+            opacity: 0.8; /* Setting opacity for the exercise container */
+        }
+        #title {
+            font-size: 40px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        #text-container {
+            margin-bottom: 20px;
+            text-align: justify;
+            padding: 10px;
+            font-size: 20px;
+            border: 2px solid #ccc; /* Adding border around the text container */
+            border-radius: 5px; /* Rounded corners */
+            background-color: #f9f9f9; /* Light background color */
+        }
+        #choices-container {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 2px;
+            background-color: #f9f9f9;
+            color: #000000;
+            border: 2px solid#ccc;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #A9A9A9;
+            transform: translateY(-4px);
+        }
+        .choice {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 10px;
+            font-size: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #fff;
+        }
+        .choice:hover {
+            background-color: #f0f0f0;
+        }
+        #dropbox-container {
+            margin-bottom: 20px;
+        }
+        .dropped-chunk {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 10px;
+            font-size: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #dff0d8;
+        }
+        /* Add styles for the feedback message */
+        .feedback-message {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #666;
+        }
+        /* Hide choices container when reset button is visible */
+        #reset-btn + #choices-container {
+            display: none;
+        }
+        /* Added styles for dropdown menus */
+        #chunk-length {
+            width: 13%;
+            padding: 5px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            height: 35px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="exercise-container">
+        <div id="title">Pyramidor</div>
+        <div class="subtitle" id="subtitle">One in four: Use the dropdown menu to select the size of the chunks you want to create and click on Generate exercise.</div>
+        <br>
+        <div id="text-container">
+            <!-- Display original text here -->
+        </div>
+        <div id="choices-container">
+            <!-- Display multiple choice options here -->
+        </div>
+        <div id="dropbox-container">
+            <!-- Display dropbox where correct choices will be dropped -->
+        </div>
+        <label for="chunk-length">Select chunk length:</label>
+        <select id="chunk-length">
+            <option value="1">Single words</option>
+            <option value="2">Small chunks</option>
+            <option value="4">Medium chunks</option>
+            <option value="6">Big chunks</option>
+        </select>
+        <button id="generate-btn">Generate Exercise</button>
+        <button id="reset-btn" style="display: none;">Reset</button>
+    </div>
+
+     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const textContainer = document.getElementById('text-container');
+        const choicesContainer = document.getElementById('choices-container');
+        const dropboxContainer = document.getElementById('dropbox-container');
+        const generateBtn = document.getElementById('generate-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const chunkLengthSelect = document.getElementById('chunk-length');
+
+        const englishText = "I woke up at seven o\'clock and took a shower in the bathroom. I had breakfast in the kitchen, and then I brushed my teeth. I left the house at eight o\'clock to go to school. I took the bus, and I arrived at school at quarter to nine. I had lunch in the cafeteria at one o\'clock. I left school at three-thirty and took the bus home. I arrived home around four o\'clock. I watched some TV, then had dinner at six o\'clock. After dinner, I did my homework, read a bit, and listened to the radio. Then, at ten o\'clock, I washed up and went to bed.";
+        const frenchText = "Je me suis levé à sept heures et je me suis douché dans la salle de bains. J\'ai pris le petit déjeuner dans la cuisine, et puis je me suis brossé les dents. J\'ai quitté la maison à huit heures pour aller au collège. J\'ai pris le bus, et je suis arrivé au collège à neuf heures moins le quart. J\'ai pris le déjeuner à la cantine à une heure. J\'ai quitté le collège à trois heures et demie et je suis rentré en bus. Je suis arrivé chez moi vers quatre heures. J\'ai regardé un peu la télé, puis j\'ai pris le dîner à six heures. Après le dîner, j\'ai fait mes devoirs, j\'ai lu un peu et j\'ai écouté la radio. Puis, à dix heures, je me suis lavé et je me suis couché.";
+
+        let chunks = [];
+        let correctChunks = [];
+        let droppedChunks = [];
+        let currentIndex = 0;
+        let exerciseCompleted = false;
+
+        // Function to generate text chunks
+        function generateChunks(text, length) {
+            const words = text.split(' ');
+            chunks = [];
+            for (let i = 0; i < words.length; i += length) {
+                chunks.push(words.slice(i, i + length).join(' '));
+            }
+        }
+
+        // Function to display text chunks
+        function displayChunks() {
+            textContainer.textContent = englishText;
+        }
+
+        // Function to display multiple choice options
+        function displayChoices() {
+            choicesContainer.innerHTML = '';
+
+            const shuffledChunks = shuffle([...chunks]);
+            const firstCorrectIndex = shuffledChunks.findIndex(chunk => chunk === correctChunks[currentIndex]);
+            const firstCorrectChunk = shuffledChunks[firstCorrectIndex];
+            const wrongChoiceIndex = firstCorrectIndex % 3;
+            shuffledChunks[firstCorrectIndex] = shuffledChunks[wrongChoiceIndex];
+            shuffledChunks[wrongChoiceIndex] = firstCorrectChunk;
+
+            const limitedWrongChoices = shuffledChunks.slice(0, 4);
+            limitedWrongChoices.forEach((chunk, index) => {
+                const choiceElement = createChoiceElement(chunk, index);
+                choicesContainer.appendChild(choiceElement);
+            });
+
+            const nextCorrectIndex = (firstCorrectIndex + 1) % shuffledChunks.length;
+            const nextCorrectChunk = shuffledChunks[nextCorrectIndex];
+            correctChunks.push(nextCorrectChunk);
+        }
+
+        // Function to create choice element
+        function createChoiceElement(chunk, index) {
+            const choiceElement = document.createElement('div');
+            choiceElement.classList.add('choice');
+            choiceElement.textContent = chunk;
+            choiceElement.addEventListener('click', function() {
+                if (!exerciseCompleted && choiceElement.textContent === correctChunks[currentIndex]) {
+                    droppedChunks.push(choiceElement.textContent);
+                    displayDroppedChunks();
+                    currentIndex++;
+                    const lastDroppedChunk = droppedChunks[droppedChunks.length - 1];
+                    const lastWordOfOriginalText = frenchText.split(' ').pop();
+                    exerciseCompleted = lastDroppedChunk.includes(lastWordOfOriginalText);
+
+                    if (exerciseCompleted) {
+                        alert('Congratulations! You completed the exercise.');
+                        resetExercise();
+                        disableChoices();
+                        generateBtn.disabled = true;
+                    } else {
+                        if (currentIndex < correctChunks.length) {
+                            displayChoices();
+                        }
+                    }
+                } else {
+                    choiceElement.style.display = 'none';
+                }
+            });
+            return choiceElement;
+        }
+
+        // Function to disable further selection of chunks
+        function disableChoices() {
+            const choiceElements = document.querySelectorAll('.choice');
+            choiceElements.forEach(element => {
+                element.removeEventListener('click', function() {});
+                element.style.pointerEvents = 'none';
+            });
+        }
+
+        // Function to display dropped chunks
+        function displayDroppedChunks() {
+            dropboxContainer.innerHTML = '';
+            droppedChunks.forEach(chunk => {
+                const droppedChunkElement = document.createElement('div');
+                droppedChunkElement.classList.add('dropped-chunk');
+                droppedChunkElement.textContent = chunk;
+                dropboxContainer.appendChild(droppedChunkElement);
+            });
+        }
+
+        // Function to shuffle array
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to reset the exercise
+        function resetExercise() {
+            exerciseCompleted = false;
+            correctChunks = [];
+            droppedChunks = [];
+            currentIndex = 0;
+            resetBtn.style.display = 'inline-block';
+            generateBtn.style.display = 'none';
+
+            const feedbackMessage = document.createElement('div');
+            feedbackMessage.textContent = 'Exercise completed. Press the reset button to enter a new text.';
+            dropboxContainer.appendChild(feedbackMessage);
+
+            choicesContainer.style.display = 'none';
+        }
+
+        // Event listener for "Generate Exercise" button
+        generateBtn.addEventListener('click', function() {
+            const chunkLength = parseInt(chunkLengthSelect.value);
+            generateChunks(frenchText, chunkLength);
+            correctChunks = [...chunks];
+            droppedChunks = [];
+            currentIndex = 0;
+            displayChunks();
+            displayChoices();
+        });
+
+        // Event listener for "Reset" button
+        resetBtn.addEventListener('click', function() {
+            resetBtn.style.display = 'none';
+            generateBtn.style.display = 'inline-block';
+            generateBtn.disabled = false;
+            choicesContainer.innerHTML = '';
+            dropboxContainer.innerHTML = '';
+            correctChunks = [];
+            droppedChunks = [];
+            currentIndex = 0;
+            choicesContainer.style.display = 'block';
+        });
+
+        // Initial setup
+        displayChunks();
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #exercise-container {
+            margin: 0 auto;
+            padding: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: transparent; 
+            opacity: 0.8; /* Setting opacity for the exercise container */
+        }
+        #title {
+            font-size: 40px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .english-text-box {
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 20px;
+            text-align: justify;
+            border: 2px solid #ccc; /* Adding border around the text container */
+            border-radius: 5px; /* Rounded corners */
+            background-color: #f9f9f9; /* Light background color */
+        }
+        #choices-container {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 2px;
+            background-color: #f9f9f9;
+            color: #000000;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #A9A9A9;
+            transform: translateY(-4px);
+        }
+        .choice {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 10px;
+            font-size: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #fff;
+        }
+        .choice:hover {
+            background-color: #f0f0f0;
+        }
+        #dropbox-container {
+            margin-bottom: 20px;
+        }
+        .dropped-chunk {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 10px;
+            font-size: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #dff0d8;
+        }
+        /* Add styles for the feedback message */
+        .feedback-message {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+        /* Hide choices container when reset button is visible */
+        #reset-btn + #choices-container {
+            display: none;
+        }
+        .heart {
+            color: red;
+            font-size: 24px;
+            margin-right: 5px;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="exercise-container">
+        <div id="title">Speedator</div>
+        <div class="subtitle" id="subtitle">Recompose the text before you run out of time or lives.</div>
+        <br>
+        <div class="english-text-box">
+      <div id="englishText">I got up at seven o'clock and I had a shower in the bathroom. I had breakfast in the kitchen, and then I cleaned my teeth. I left the house at eight o'clock to go to school. I took the bus, and I arrived at school at a quarter to nine. I had lunch in the canteen at one o'clock. I left school at half past three and I went home by bus. I got home at about four o'clock. I watched a bit of TV, then I had dinner at six o'clock. After dinner I did my homework, I read for a bit and I listened to the radio. Then at ten o'clock I had a wash and I went to bed.</div>
+    </div>
+    <div id="frenchText" class="hide">Je me suis levé à sept heures et je me suis douché dans la salle de bains. J'ai pris le petit déjeuner dans la cuisine, et puis je me suis brossé les dents. J'ai quitté la maison à huit heures pour aller au collège. J'ai pris le bus, et je suis arrivé au collège à neuf heures moins le quart. J'ai pris le déjeuner à la cantine à une heure. J'ai quitté le collège à trois heures et demie et je suis rentré en bus. Je suis arrivé chez moi vers quatre heures. J'ai regardé un peu la télé, puis j'ai pris le dîner à six heures. Après le dîner, j'ai fait mes devoirs, j'ai lu un peu et j'ai écouté la radio. Puis, à dix heures, je me suis lavé et je me suis couché.</div>
+           </div>
+        <div id="choices-container">
+            <!-- Display multiple choice options here -->
+        </div>
+        <div id="dropbox-container">
+            <!-- Display dropbox where correct choices will be dropped -->
+        </div>
+        <div id="lives">Lives: <span id="heart-container"></span></div>
+        <div id="timer">Time Left: 10</div>
+        <button id="generate-btn">Generate Exercise</button>
+        <button id="reset-btn" style="display: none;">Reset</button>
+    </div>
+   
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const choicesContainer = document.getElementById('choices-container');
+            const dropboxContainer = document.getElementById('dropbox-container');
+            const generateBtn = document.getElementById('generate-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const livesDisplay = document.getElementById('lives');
+            const heartContainer = document.getElementById('heart-container');
+            const timerDisplay = document.getElementById('timer');
+
+            const englishText = document.getElementById('englishText').textContent.trim();
+            const frenchText = document.getElementById('frenchText').textContent.trim();
+
+            let chunks = [];
+            let correctChunks = [];
+            let droppedChunks = [];
+            let currentIndex = 0;
+            let exerciseCompleted = false;
+            let lives = 3;
+            let timer;
+
+            // Function to generate text chunks
+            function generateChunks(text) {
+                const words = text.split(' ');
+                chunks = [];
+                const chunkLength = 4; // Set chunk length to 4
+                for (let i = 0; i < words.length; i += chunkLength) {
+                    chunks.push(words.slice(i, i + chunkLength).join(' '));
+                }
+            }
+
+             // Function to display multiple choice options
+            function displayChoices() {
+                choicesContainer.innerHTML = '';
+
+                const shuffledChunks = shuffle([...chunks]);
+                const firstCorrectIndex = shuffledChunks.findIndex(chunk => chunk === correctChunks[currentIndex]);
+                const firstCorrectChunk = shuffledChunks[firstCorrectIndex];
+                const wrongChoiceIndex = firstCorrectIndex % 3;
+                shuffledChunks[firstCorrectIndex] = shuffledChunks[wrongChoiceIndex];
+                shuffledChunks[wrongChoiceIndex] = firstCorrectChunk;
+
+                const limitedWrongChoices = shuffledChunks.slice(0, 4);
+                limitedWrongChoices.forEach((chunk, index) => {
+                    const choiceElement = createChoiceElement(chunk, index);
+                    choicesContainer.appendChild(choiceElement);
+                });
+
+                const nextCorrectIndex = (firstCorrectIndex + 1) % shuffledChunks.length;
+                const nextCorrectChunk = shuffledChunks[nextCorrectIndex];
+                correctChunks.push(nextCorrectChunk);
+
+                // Start the timer when choices are displayed
+                startTimer();
+            }
+
+
+            // Function to create choice element
+            function createChoiceElement(chunk) {
+                const choiceElement = document.createElement('div');
+                choiceElement.classList.add('choice');
+                choiceElement.textContent = chunk;
+                choiceElement.addEventListener('click', function() {
+                    clearTimeout(timer); // Reset the timer when a choice is clicked
+                    if (!exerciseCompleted && choiceElement.textContent === correctChunks[currentIndex]) {
+                        droppedChunks.push(choiceElement.textContent);
+                        displayDroppedChunks();
+                        currentIndex++;
+                        exerciseCompleted = droppedChunks.join(' ') === frenchText;
+
+                        if (exerciseCompleted) {
+                            displayWinningFeedback();
+                            resetBtn.style.display = 'inline-block';
+                            generateBtn.disabled = true;
+                            clearInterval(timer); // Stop the timer when the exercise is completed
+                        } else {
+                            if (currentIndex < correctChunks.length) {
+                                displayChoices();
+                            }
+                        }
+                    } else {
+                        choiceElement.style.display = 'none';
+                        // Decrement lives if the wrong choice is made
+                        lives--;
+                        updateLivesDisplay();
+                        // Check if the game is over
+                        if (lives === 0) {
+                            gameOver();
+                        }
+                    }
+                });
+                return choiceElement;
+            }
+
+            // Function to disable further selection of chunks
+            function disableChoices() {
+                const choiceElements = document.querySelectorAll('.choice');
+                choiceElements.forEach(element => {
+                    element.removeEventListener('click', function() {});
+                    element.style.pointerEvents = 'none';
+                });
+            }
+
+            // Function to display dropped chunks
+            function displayDroppedChunks() {
+                dropboxContainer.innerHTML = '';
+                droppedChunks.forEach(chunk => {
+                    const droppedChunkElement = document.createElement('div');
+                    droppedChunkElement.classList.add('dropped-chunk');
+                    droppedChunkElement.textContent = chunk;
+                    dropboxContainer.appendChild(droppedChunkElement);
+                });
+            }
+
+            // Function to shuffle array
+            function shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            // Function to start the timer
+            function startTimer() {
+                let timeLeft = 10;
+                timerDisplay.textContent = `Time Left: ${timeLeft}`;
+                timer = setInterval(() => {
+                    timeLeft--;
+                    timerDisplay.textContent = `Time Left: ${timeLeft}`;
+                    if (timeLeft === 0 || exerciseCompleted) {
+                        clearInterval(timer);
+                        if (!exerciseCompleted) {
+                            // Decrement lives when time runs out
+                            lives--;
+                            updateLivesDisplay();
+                            // Check if the game is over
+                            if (lives === 0) {
+                                gameOver();
+                            } else {
+                                displayChoices();
+                            }
+                        }
+                    }
+                }, 1000);
+            }
+
+            // Function to update the lives display
+            function updateLivesDisplay() {
+                heartContainer.innerHTML = ''; // Clear previous hearts
+                for (let i = 0; i < lives; i++) {
+                    const heartIcon = document.createElement('span');
+                    heartIcon.classList.add('heart');
+                    heartIcon.innerHTML = '&#x2764;'; // Display heart symbol
+                    heartContainer.appendChild(heartIcon);
+                }
+            }
+
+            // Function to handle game over
+            function gameOver() {
+                alert('Game over! You ran out of lives.');
+                disableChoices(); // Disable further interaction with choices
+                const feedbackMessage = document.createElement('div');
+                feedbackMessage.textContent = 'Game over, you lost. Press the reset button to try again.';
+                dropboxContainer.appendChild(feedbackMessage);
+                resetBtn.style.display = 'inline-block';
+                generateBtn.disabled = true;
+            }
+
+            // Function to display winning feedback
+            function displayWinningFeedback() {
+                const feedbackMessage = document.createElement('div');
+                feedbackMessage.textContent = 'Congratulations! You completed the exercise.';
+                feedbackMessage.classList.add('feedback-message');
+                dropboxContainer.appendChild(feedbackMessage);
+            }
+
+            // Function to reset the exercise
+            function resetExercise() {
+                exerciseCompleted = false;
+                currentIndex = 0;
+                lives = 3; // Reset lives count
+                updateLivesDisplay(); // Update lives display
+                resetBtn.style.display = 'none';
+                generateBtn.disabled = false;
+                droppedChunks = [];
+                clearInterval(timer); // Stop the timer
+                choicesContainer.style.display = 'block';
+                // Clear any feedback messages
+                const feedbackMessages = document.querySelectorAll('.feedback-message');
+                feedbackMessages.forEach(message => message.remove());
+                // Restore choices
+                const choiceElements = document.querySelectorAll('.choice');
+                choiceElements.forEach(element => element.style.display = 'inline-block');
+                // Reset timer display
+                timerDisplay.textContent = 'Time Left: 10';
+            }
+
+            // Event listener for "Generate Exercise" button
+            generateBtn.addEventListener('click', function() {
+                generateChunks(frenchText); // Generate text chunks from the French text
+                correctChunks = [...chunks];
+                droppedChunks = [];
+                currentIndex = 0;
+                displayChoices();
+            });
+
+            // Event listener for "Reset" button
+            resetBtn.addEventListener('click', function() {
+                resetExercise();
+            });
+
+            // Initial setup
+            updateLivesDisplay(); // Display initial lives count
+        });
+    </script>
+</body>
+</html>
