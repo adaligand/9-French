@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dragator</title>
+ <style>
+body {
+            font-family: Arial, sans-serif;
+        }
+.container {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.subtitle {
+  font-size: 20px;
+  margin-bottom: 10px;
+ }
+textarea {
+  width: 100%;
+  height: 150px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.english-section,
+.exercise-section {
+  width: 100%;
+font-size: 20px;
+text-align: justify;
+  margin-bottom: 20px;
+}
+
+.english-text-container {
+  margin-bottom: 20px;
+  font-size: 20px;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+}
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  color: #000000;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #A9A9A9;
+  transform: translateY(-4px);
+}
+
+.hide {
+  display: none;
+}
+
+#exerciseOutput {
+  font-size: 20px;
+  line-height: 2;
+  text-align: justify;
+}
+
+.removed-word {
+  display: inline-block;
+  margin: 5px;
+  padding: 5px 5px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.drop-target {
+  display: inline-block;
+  border: 1px dashed #007bff;
+  padding: 0px;
+  margin: 0px 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  min-width: 50px;
+  min-height: 30px;
+  max-height: 30px;
+  text-align: middle;
+  word-wrap: break-word;
+  height: 30px;
+  vertical-align: bottom;
+}
+
+.filled-word {
+  display: inline;
+  margin: 0 3px;
+  padding: 0;
+  vertical-align: bottom;
+}
+
+#exerciseOutput {
+  font-size: 18px;
+  line-height: 2;
+  text-align: justify;
+  word-wrap: break-word; /* Add word wrap to prevent overflow */
+  overflow-wrap: break-word; /* For compatibility with older browsers */
+  max-width: 100%; /* Limit the width to prevent overflowing outside the window */
+  word-break: break-all; /* Prevent words from breaking across lines */
+}
+#feedback {
+  margin-top: 10px;
+  font-weight: bold;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+select {
+  width: 13%;
+  padding: 5px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  height: 35px;
+}
+.print-title {
+  /* Displayed in print */
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px; /* Adjust margin as needed */
+  background-color: #10148; /* Fix typo */
+}
+
+@media print {
+  .title {
+    display: none; /* Hide the title in print */
+  }
+  /* Show print title */
+  .print-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .subtitle {
+    display: none;
+  }
+
+  /* Hide select, buttons, and labels */
+  #percentageSelect, button, label[for="percentageSelect"], #checkFeedbackContainer {
+    display: none !important;
+  }
+
+  /* Ensure exercise output is visible */
+  #exerciseOutput {
+    display: block !important;
+  }
+
+  /* Adjust input appearance */
+  input.filled-word {
+    border: none !important; /* Remove all borders */
+    border-bottom: 1px solid black !important; /* Add bottom border only */
+    padding: 5px !important; /* Adjust padding for better appearance */
+  }
+
+  /* Ensure filled words are visible */
+  .filled-word::placeholder {
+    color: black !important;
+  }
+
+  /* Additional print styles */
+  .print-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    display: block; /* Ensure it's visible when printing */
+  }
+
+  body {
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 20px;
+    margin: 0;
+  }
+
+  .container {
+    width: auto;
+    padding: 0;
+    margin: 0;
+  }
+
+  .drop-target {
+    /* Adjust the width for printing */
+    min-width: 100px; /* Or any value that suits your content */
+    /* Hide the default border */
+    border: none;
+    /* Set bottom border */
+    border-bottom: 1px dashed #007bff; /* Adjust color and style as needed */
+    /* Other styles... */
+  }
+
+  .removed-word {
+    font-size: 20px; /* Adjust the font size as needed */
+  }
+
+  .removed-words-container {
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .removed-words-container .removed-word {
+    margin: 5px;
+    display: center;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 5px 10px;
+  }
+
+  #exerciseOutput {
+    font-size: 18px;
+    line-height: 3;
+    text-align: justify;
+  }
+
+  /* Hide the exercise controls when printing */
+  #percentageSelect,
+  button,
+  label[for="percentageSelect"] {
+    display: none;
+  }
+}
+</style>
+</head>
+<body onload="initialize()">
+<div class="container">
+   <div class="title">Dragator</div>
+  <div class="subtitle" id="subtitle">Drag and drop: Select the amount of words to remove from your text and click on Generate exercise.</div>
+  <br>
+  <label for="percentageSelect">Select the amount of words to remove:</label>
+  <select id="percentageSelect">
+    <option value="aFewWords">A few words</option>
+    <option value="someWords">Some words</option>
+    <option value="moreWords">More words</option>
+    <option value="half">Half</option>
+    <option value="evenMoreWords">Even more words</option>
+  </select>
+  <button onclick="generateExercise()">Generate Exercise</button>
+  <div class="english-section">
+    <div class="english-text-container">
+      <div class="english-title">
+        
+      </div>
+      <div id="frenchText" class="hide">
+  Je me suis levé à sept heures et je me suis douché dans la salle de bains. J'ai pris le petit déjeuner dans la cuisine, et puis je me suis brossé les dents. J'ai quitté la maison à huit heures pour aller au collège. J'ai pris le bus, et je suis arrivé au collège à neuf heures moins le quart. J'ai pris le déjeuner à la cantine à une heure. J'ai quitté le collège à trois heures et demie et je suis rentré en bus. Je suis arrivé chez moi vers quatre heures. J'ai regardé un peu la télé, puis j'ai pris le dîner à six heures. Après le dîner, j'ai fait mes devoirs, j'ai lu un peu et j'ai écouté la radio. Puis, à dix heures, je me suis lavé et je me suis couché.
+</div>
+<div id="englishTranslation">
+  I got up at seven o'clock and took a shower in the bathroom. I had breakfast in the kitchen, and then I brushed my teeth. I left the house at eight o'clock to go to school. I took the bus and arrived at school at a quarter to nine. I had lunch in the cafeteria at one o'clock. I left school at half-past three and returned home by bus. I arrived home around four o'clock. I watched some TV, then had dinner at six o'clock. After dinner, I did my homework, read a bit, and listened to the radio. Then, at ten o'clock, I washed and went to bed.
+</div>
+
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div id="exerciseOutput" class="hide"></div>
+    <div id="removedWords" class="hide"></div>
+    <div id="checkFeedbackContainer" class="hide">
+      <button id="checkButton" onclick="checkExercise()">Check Exercise</button>
+      <button id="resetButton" onclick="resetExercise()" class="hide">Reset Exercise</button>
+      <div id="feedback" class="hide"></div>
+    </div>
+  </div>
+</div>
+<script>
+var removedWordSet = new Set();
+function initialize() {
+  // Populate the French text
+  var frenchText = document.getElementById('frenchText').textContent.trim();
+  var englishTranslation = document.getElementById('englishTranslation').textContent.trim();
+
+  document.getElementById('exerciseOutput').textContent = frenchText;
+  document.getElementById('englishTranslation').textContent = englishTranslation;
+}
+function generateExercise() {
+  // Reset the exercise first
+  resetExercise();
+
+  var frenchText = document.getElementById('frenchText').textContent.trim();
+  generateDragDropExercise(frenchText);
+  document.getElementById('subtitle').style.display = 'none'; // Hide the subtitle
+}
+ 
+function generateDragDropExercise(frenchText) {
+  document.getElementById('exerciseOutput').innerHTML = '';
+  document.getElementById('removedWords').innerHTML = '';
+
+  var selectValue = document.getElementById('percentageSelect').value;
+  var percentage;
+
+  switch (selectValue) {
+    case "aFewWords":
+      percentage = 5;
+      break;
+    case "someWords":
+      percentage = 10;
+      break;
+    case "moreWords":
+      percentage = 20;
+      break;
+    case "half":
+      percentage = 50;
+      break;
+    case "evenMoreWords":
+      percentage = 60;
+      break;
+    default:
+      alert("Invalid selection.");
+      return;
+  }
+
+  // Split the text based on whitespace characters and punctuation signs
+  var words = frenchText.match(/[\wÀ-ÿ'’-]+|[^\w\s'’-]+/gu);
+
+  var filteredWords = words.filter(word => word.length > 1);
+  var uniqueWords = Array.from(new Set(filteredWords));
+  var numWordsToRemove = Math.min(Math.round((percentage / 100) * uniqueWords.length), uniqueWords.length);
+
+  if (numWordsToRemove < 1) {
+    alert("Please select a percentage greater than 0.");
+    return;
+  }
+
+  function shuffle(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
+  }
+
+  uniqueWords = shuffle(uniqueWords);
+
+  var removedWords = uniqueWords.slice(0, numWordsToRemove);
+
+  var modifiedText = '';
+  frenchText.match(/[\wÀ-ÿ'’-]+|[^\w\s'’-]+/gu).forEach(function(match) {
+    if (match.trim() !== "") {
+      if (removedWords.includes(match.trim()) && !removedWordSet.has(match.trim())) {
+        removedWordSet.add(match.trim());
+        modifiedText += '<span class="drop-target" data-correct-answer="' + match.trim() + '" onclick="emptyDropBox(this)"></span>';
+      } else {
+        modifiedText += '<span class="filled-word">' + match + '</span>';
+      }
+    } else {
+      modifiedText += ' ';
+    }
+  });
+
+  var exerciseOutput = document.getElementById('exerciseOutput');
+  exerciseOutput.innerHTML = modifiedText + '<br><br>';
+  exerciseOutput.classList.remove('hide');
+
+  document.getElementById('checkFeedbackContainer').classList.add('hide');
+
+  var removedWordsContainer = document.getElementById('removedWords');
+  removedWordsContainer.classList.remove('hide');
+
+  while (removedWordsContainer.childElementCount > numWordsToRemove) {
+    removedWordsContainer.removeChild(removedWordsContainer.lastChild);
+  }
+
+  while (removedWordsContainer.childElementCount < numWordsToRemove) {
+    var wordToAdd = removedWords[numWordsToRemove - removedWordsContainer.childElementCount - 1];
+    var removedWord = document.createElement('div');
+    removedWord.textContent = wordToAdd;
+    removedWord.className = 'removed-word';
+    removedWord.draggable = true;
+    removedWord.ondragstart = function(event) {
+      drag(event);
+    };
+    removedWordsContainer.appendChild(removedWord);
+  }
+
+  resetFeedback();
+
+  var dropTargets = document.getElementsByClassName('drop-target');
+  for (var i = 0; i < dropTargets.length; i++) {
+    dropTargets[i].addEventListener('drop', function(event) {
+      drop(event);
+    });
+    dropTargets[i].addEventListener('dragover', function(event) {
+      allowDrop(event);
+    });
+  }
+
+  updateCheckingButtonVisibility();
+}
+
+function emptyDropBox(dropTarget) {
+  var filledWord = dropTarget.querySelector('.filled-word');
+  if (filledWord) {
+    var wordToAddBack = document.createElement('div');
+    wordToAddBack.textContent = filledWord.textContent;
+    wordToAddBack.className = 'removed-word';
+    wordToAddBack.draggable = true;
+    wordToAddBack.ondragstart = function(event) {
+      drag(event);
+    };
+    document.getElementById('removedWords').appendChild(wordToAddBack);
+    filledWord.parentNode.removeChild(filledWord);
+  }
+
+  // Update the visibility of the checking button
+  updateCheckingButtonVisibility();
+}
+
+function allowDrop(event) {
+  event.preventDefault();
+}
+
+function drag(event) {
+  event.dataTransfer.setData("text", event.target.textContent);
+}
+
+function drop(event) {
+  event.preventDefault();
+  var data = event.dataTransfer.getData("text");
+  var droppedWord = document.createElement("span");
+  droppedWord.textContent = data;
+  droppedWord.className = "filled-word";
+
+  // Check if the drop target already contains a filled word
+  var target = event.target;
+  if (target.classList.contains("drop-target") && !target.querySelector(".filled-word")) {
+    // Remove the word from the list of draggable words
+    var draggableWords = document.querySelectorAll('.removed-word');
+    draggableWords.forEach(function(word) {
+      if (word.textContent.trim() === droppedWord.textContent.trim()) {
+        word.parentNode.removeChild(word);
+      }
+    });
+
+    target.appendChild(droppedWord);
+
+    // Call the function to update the visibility of the checking button after a short delay
+    setTimeout(updateCheckingButtonVisibility, 100);
+  }
+}
+
+function updateCheckingButtonVisibility() {
+  var checkButton = document.getElementById('checkButton');
+  if (checkFilledBoxes()) {
+    checkButton.parentNode.classList.remove('hide');
+    checkButton.classList.remove('hide');
+  } else {
+    checkButton.parentNode.classList.add('hide');
+    checkButton.classList.add('hide');
+  }
+}
+
+function checkFilledBoxes() {
+  var dropTargets = document.getElementsByClassName('drop-target');
+  for (var i = 0; i < dropTargets.length; i++) {
+    if (dropTargets[i].querySelector('.filled-word') === null) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function checkExercise() {
+  var dropTargets = document.getElementsByClassName('drop-target');
+  var feedback = document.getElementById('feedback');
+  var incorrectCount = 0;
+
+  for (var i = 0; i < dropTargets.length; i++) {
+    var correctAnswer = dropTargets[i].dataset.correctAnswer;
+    var filledWord = dropTargets[i].querySelector('.filled-word');
+
+    if (!filledWord || filledWord.textContent.trim() !== correctAnswer) {
+      incorrectCount++;
+    }
+  }
+
+  if (incorrectCount === 0) {
+    feedback.textContent = 'All answers are correct!';
+  } else {
+    feedback.textContent = 'Number of incorrect answers: ' + incorrectCount;
+  }
+
+  feedback.classList.remove('hide');
+
+  // Update the visibility of the reset button
+  updateResetButtonVisibility();
+}
+
+function resetFeedback() {
+  var feedback = document.getElementById('feedback');
+  var checkButton = document.getElementById('checkButton');
+  if (!checkButton.classList.contains('hide')) {
+    feedback.textContent = '';
+  }
+}
+
+function updateResetButtonVisibility() {
+  var resetButton = document.getElementById('resetButton');
+  var feedback = document.getElementById('feedback');
+
+  // Show the reset button only when all answers are correct and the input textbox is hidden
+  if (feedback.textContent === 'All answers are correct!') {
+    resetButton.classList.remove('hide');
+  } else {
+    resetButton.classList.add('hide');
+  }
+}
+
+function resetExercise() {
+  // Clear the removed word set
+  removedWordSet.clear();
+
+  // Hide the exercise output and removed words
+  document.getElementById('exerciseOutput').classList.add('hide');
+  document.getElementById('removedWords').classList.add('hide');
+
+  // Show the subtitle
+  var subtitle = document.getElementById('subtitle');
+  subtitle.style.display = 'block';
+
+  // Clear any feedback message and hide feedback
+  var feedback = document.getElementById('feedback');
+  feedback.textContent = '';
+  feedback.classList.add('hide');
+
+  // Hide the reset button
+  var resetButton = document.getElementById('resetButton');
+  resetButton.classList.add('hide');
+
+  // Hide the check exercise button and its container only if the subtitle is visible
+  var checkFeedbackContainer = document.getElementById('checkFeedbackContainer');
+  if (subtitle.style.display === 'block') {
+    checkFeedbackContainer.classList.add('hide');
+    var checkButton = document.getElementById('checkButton');
+    checkButton.classList.add('hide');
+  }
+
+  // Show the text and translation
+  initialize();
+}
+
+</script>
+</body>
+</html>
