@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag and Drop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    .title {
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .subtitle {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .counter {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      font-size: 20px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #f9f9f9;
+      border: 2px solid #ccc;
+      color: #000000;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    .hide {
+      display: none;
+    }
+    .english-sentence {
+      margin-bottom: 20px;
+      font-size: 20px;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+      text-align: center;
+    }
+    .french-sentence {
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+    .draggable-word {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-right: 5px;
+      font-size: 20px;
+      margin-bottom: 5px;
+      border: 1px solid black;
+      padding: 2px 10px;
+      border-radius: 5px;
+      background-color: #f0f0f0;
+      height: 30px;
+      line-height: 1.5;
+      vertical-align: middle;
+      overflow: hidden;
+    }
+    .dropzone-container {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .dropzone {
+      border: 1px dashed #007bff;
+      min-width: 30px;
+      min-height: 30px;
+      font-size: 20px;
+      height: auto;
+      border-radius: 10px;
+      display: inline-block;
+      padding: 5px 10px;
+      vertical-align: middle;
+      line-height: 1.5;
+    }
+    .feedback {
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body onload="initializeChunk()">
+  <div class="container">
+    <div class="title">Drag and drop</div>
+    <div class="subtitle" id="subtitle">Drag and drop: Click on Generate exercise.</div>
+    <div class="counter" id="sentenceCounter"></div> <!-- Counter container -->
+    <br>
+    <!-- Hidden elements for English and French sentences -->
+    <div id="englishSentences" class="hide">
+      <div class="english-sentence">1I make up at seven o'clock.</div>
+      <div class="english-sentence">2I had a shower in the morning.</div>
+      <div class="english-sentence">3I went to work by car.</div>
+      <div class="english-sentence">4I make up at seven o'clock.</div>
+      <div class="english-sentence">5I had a shower in the morning.</div>
+      <div class="english-sentence">6I travel by car.</div>
+      <div class="english-sentence">7I make up at seven o'clock.</div>
+      <div class="english-sentence">I had a shower in the morning.</div>
+      <div class="english-sentence">9I went to work by car.</div>
+      <div class="english-sentence">10I make up at seven o'clock.</div>
+      <div class="english-sentence">11I had a shower in the morning.</div>
+      <div class="english-sentence">12I went to work by car.</div>
+      <!-- Add more sentences here as needed -->
+    </div>
+    <div id="frenchSentences" class="hide">
+      <div class="french-sentence">Je me suis levé à sept heures.</div>
+      <div class="french-sentence">J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">Je suis allé au travail en voiture.</div>
+      <div class="french-sentence">Je me suis levé à sept heures.</div>
+      <div class="french-sentence">J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">Je voyage en voiture.</div>
+      <div class="french-sentence">Je me suis levé à sept heures.</div>
+      <div class="french-sentence">J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">Je suis allé au travail en voiture.</div>
+      <div class="french-sentence">Je me suis levé à sept heures.</div>
+      <div class="french-sentence">J'ai pris une douche ce matin.</div>
+      <div class="french-sentence">Je suis allé au travail en voiture.</div>
+      <!-- Add more sentences here as needed -->
+    </div>
+    <!-- End of hidden elements -->
+
+    <div id="exerciseOutput" class="hide"></div>
+    <div class="dropzone-container hide" id="dropZones"></div>
+    
+    <div class="input-container">
+      <button id="generateButtonChunk" class="hide" onclick="generateChunk()">Generate Exercise</button>
+      <div id="feedback" class="hide"></div>
+      <button id="nextButton" class="hide" onclick="nextText()">Next</button>
+      <button id="resetButton" class="hide" onclick="resetActivity()">Restart</button>
+      <br>
+    </div>
+  </div>
+<script>
+    var currentTextIndex = 0;
+    var originalChunks = [];
+    var currentChunkIndex = 0;
+    var selectedEnglishSentences = [];
+    var selectedFrenchSentences = [];
+    var filledDropzonesCount = 0;
+
+    function initializeChunk() {
+        document.getElementById('subtitle').classList.remove('hide');
+        selectRandomSentences();
+        document.getElementById('generateButtonChunk').classList.remove('hide');
+    }
+
+    var usedIndices = [];
+
+    function selectRandomSentences() {
+        var englishSentences = document.querySelectorAll('.english-sentence');
+        var frenchSentences = document.querySelectorAll('.french-sentence');
+
+        var remainingIndices = Array.from(Array(englishSentences.length).keys()).filter(index => !usedIndices.includes(index));
+
+        if (remainingIndices.length < 10) {
+            usedIndices = [];
+        }
+
+        var sentenceIndices = shuffleArray(remainingIndices);
+        var selectedIndices = sentenceIndices.slice(0, 10);
+
+        selectedEnglishSentences = selectedIndices.map(index => englishSentences[index]);
+        selectedFrenchSentences = selectedIndices.map(index => frenchSentences[index]);
+
+        usedIndices = usedIndices.concat(selectedIndices);
+    }
+
+    function generateChunk() {
+        var englishSentence = selectedEnglishSentences[currentTextIndex].textContent;
+        var frenchSentence = selectedFrenchSentences[currentTextIndex].textContent;
+        originalChunks = getWordChunks(frenchSentence);
+
+        var halfChunksCount = Math.ceil(originalChunks.length / 2);
+        var removedChunksIndices = getRandomIndices(originalChunks.length, halfChunksCount);
+        var removedChunks = removedChunksIndices.map(index => originalChunks[index]);
+
+        var sentenceWithDropzones = '';
+        for (var i = 0; i < originalChunks.length; i++) {
+            if (removedChunksIndices.includes(i)) {
+                sentenceWithDropzones += `<div class="dropzone" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="emptyDropzone(event)" data-index="${i}"></div> `;
+            } else {
+                sentenceWithDropzones += originalChunks[i] + ' ';
+            }
+        }
+
+        var exerciseOutput = document.getElementById('exerciseOutput');
+        exerciseOutput.innerHTML = '';
+
+        var englishSentenceDiv = document.createElement('div');
+        englishSentenceDiv.classList.add('english-sentence');
+        englishSentenceDiv.textContent = englishSentence;
+        exerciseOutput.appendChild(englishSentenceDiv);
+
+        var sentenceDiv = document.createElement('div');
+        sentenceDiv.classList.add('french-sentence');
+        sentenceDiv.innerHTML = sentenceWithDropzones;
+        exerciseOutput.appendChild(sentenceDiv);
+
+        var chunkContainer = document.createElement('div');
+        chunkContainer.classList.add('chunk-container');
+        exerciseOutput.appendChild(chunkContainer);
+
+        for (var i = 0; i < removedChunks.length; i++) {
+            var chunkElement = document.createElement('div');
+            chunkElement.textContent = removedChunks[i];
+            chunkElement.classList.add('draggable-word');
+            chunkElement.setAttribute('draggable', 'true');
+            chunkElement.setAttribute('ondragstart', 'drag(event)');
+            chunkElement.setAttribute('data-original-index', removedChunksIndices[i]);
+            chunkContainer.appendChild(chunkElement);
+        }
+
+        exerciseOutput.classList.remove('hide');
+        document.getElementById('feedback').classList.add('hide');
+        document.getElementById('nextButton').classList.add('hide');
+        currentChunkIndex = 0;
+        filledDropzonesCount = 0;
+        document.getElementById('generateButtonChunk').classList.add('hide');
+
+        // Update the sentence counter
+        document.getElementById('sentenceCounter').textContent = (currentTextIndex + 1) + '/10';
+    }
+
+    function nextText() {
+        currentTextIndex = (currentTextIndex + 1) % 10;
+        if (currentTextIndex === 0) {
+            resetActivity(); // Reset the activity after completing all sentences
+        } else {
+            generateChunk();
+        }
+    }
+
+    function resetActivity() {
+        currentTextIndex = 0;
+        selectRandomSentences(); // Select new sentences after completing the game
+        generateChunk();
+        document.getElementById('nextButton').textContent = 'Next';
+        document.getElementById('resetButton').classList.add('hide');
+    }
+
+    function getWordChunks(text) {
+        return text.split(/\s+/).filter(Boolean);
+    }
+
+    function getRandomIndices(length, count) {
+        var indices = [];
+        while (indices.length < count) {
+            var index = Math.floor(Math.random() * length);
+            if (!indices.includes(index)) {
+                indices.push(index);
+            }
+        }
+        return indices;
+    }
+
+    function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }
+
+    function drag(event) {
+        event.dataTransfer.setData("text", event.target.textContent);
+        event.dataTransfer.setData("original-index", event.target.getAttribute('data-original-index'));
+    }
+
+    function allowDrop(event) {
+        event.preventDefault();
+    }
+
+    function drop(event) {
+        event.preventDefault();
+        var data = event.dataTransfer.getData("text");
+        var originalIndex = event.dataTransfer.getData("original-index");
+        var target = event.target;
+
+        if (target.classList.contains('dropzone') && !target.textContent) {
+            target.textContent = data;
+            target.setAttribute('data-original-index', originalIndex);
+            target.classList.add('correct-chunk');
+            filledDropzonesCount++;
+            removeDraggableWord(originalIndex);
+            checkAnswers();
+        }
+    }
+
+    function removeDraggableWord(index) {
+        var chunkContainer = document.querySelector('.chunk-container');
+        var draggableWords = chunkContainer.querySelectorAll('.draggable-word');
+
+        draggableWords.forEach(function(word) {
+            if (word.getAttribute('data-original-index') === index) {
+                word.remove();
+            }
+        });
+    }
+
+    function emptyDropzone(event) {
+        var target = event.target;
+
+        if (target.classList.contains('dropzone') && target.textContent) {
+            var originalIndex = target.getAttribute('data-original-index');
+            var word = target.textContent;
+            target.textContent = '';
+            target.classList.remove('correct-chunk');
+            filledDropzonesCount--;
+            addDraggableWord(word, originalIndex);
+            checkAnswers();
+        }
+    }
+
+    function addDraggableWord(word, index) {
+        var chunkContainer = document.querySelector('.chunk-container');
+        var chunkElement = document.createElement('div');
+        chunkElement.textContent = word;
+        chunkElement.classList.add('draggable-word');
+        chunkElement.setAttribute('draggable', 'true');
+        chunkElement.setAttribute('ondragstart', 'drag(event)');
+        chunkElement.setAttribute('data-original-index', index);
+        chunkContainer.appendChild(chunkElement);
+    }
+
+ function checkAnswers() {
+    var dropzones = document.querySelectorAll('.dropzone');
+
+    if (filledDropzonesCount === dropzones.length) {
+        var correctAnswers = 0;
+
+        for (var i = 0; i < dropzones.length; i++) {
+            var dropzoneIndex = dropzones[i].getAttribute('data-index');
+            if (dropzones[i].textContent === originalChunks[dropzoneIndex]) {
+                correctAnswers++;
+            }
+        }
+
+        if (correctAnswers === dropzones.length) {
+            var feedbackElement = document.getElementById('feedback');
+            feedbackElement.textContent = 'All answers are correct!';
+            feedbackElement.classList.remove('hide');
+            feedbackElement.classList.add('feedback');
+
+            // Check if all sentences are completed
+            if (currentTextIndex === 9) {
+                // Change button text to Restart
+                document.getElementById('nextButton').textContent = 'Restart';
+                // Change button click event to reset the activity
+                document.getElementById('nextButton').setAttribute('onclick', 'resetActivity()');
+            } else {
+                document.getElementById('nextButton').textContent = 'Next';
+                document.getElementById('nextButton').setAttribute('onclick', 'nextText()');
+            }
+
+            document.getElementById('nextButton').classList.remove('hide');
+        } else {
+            var feedbackElement = document.getElementById('feedback');
+            feedbackElement.textContent = `There are ${dropzones.length - correctAnswers} incorrect answers.`;
+            feedbackElement.classList.remove('hide');
+            feedbackElement.classList.add('feedback');
+        }
+    }
+}
+
+</script>
+</body>
+</html>
