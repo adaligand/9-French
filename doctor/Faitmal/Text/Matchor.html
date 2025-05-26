@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Matchor</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 15px;
+  }
+  h1 {
+    text-align: center;
+  }
+  .container {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+  }
+  .column {
+    width: 45%;
+  }
+  .chunk-btn {
+    display: block;
+    margin: 8px 0;
+    padding: 10px;
+    background: #eee;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 5px;
+    user-select: none;
+  }
+  .chunk-btn.selected {
+    background-color: #cce5ff;
+    border-color: #3399ff;
+  }
+  .feedback {
+    margin-top: 15px;
+    font-weight: bold;
+    min-height: 1.5em;
+    text-align: center;
+  }
+  .congrats {
+    margin-top: 20px;
+    font-size: 1.3em;
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #28a745;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<h1>Match the English and French Chunks</h1>
+
+<div class="container">
+  <div class="column" id="english-column">
+    <h2>English</h2>
+    <div id="english-chunks"></div>
+  </div>
+  <div class="column" id="french-column">
+    <h2>French</h2>
+    <div id="french-chunks"></div>
+  </div>
+</div>
+
+<div class="feedback" id="feedback"></div>
+<div class="congrats" id="congrats" style="display:none;">🎉 Congratulations! You matched all chunks! 🎉</div>
+
+<script>
+  // Full set of pairs (shortened example, replace with full data)
+  const pairs = [
+    {eng: "It is", fr: "C’est"},
+    {eng: "well located,", fr: "bien situé,"},
+    {eng: "near the beach", fr: "près de la plage"},
+    {eng: "and the town center,", fr: "et du centre-ville,"},
+    
+  ];
+
+  const batchSize = 10;
+  let currentBatchIndex = 0;
+
+  let selectedEnglish = null;
+  let selectedFrench = null;
+  let matchedCount = 0;
+
+  const englishChunksDiv = document.getElementById('english-chunks');
+  const frenchChunksDiv = document.getElementById('french-chunks');
+  const feedback = document.getElementById('feedback');
+  const congrats = document.getElementById('congrats');
+
+  // Shuffle helper function
+  function shuffle(array) {
+    const copy = array.slice();
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function renderBatch() {
+    feedback.textContent = '';
+    selectedEnglish = null;
+    selectedFrench = null;
+    matchedCount = 0;
+
+    // Clear previous
+    englishChunksDiv.innerHTML = '';
+    frenchChunksDiv.innerHTML = '';
+    congrats.style.display = 'none';
+
+    // Get current batch pairs
+    const start = currentBatchIndex * batchSize;
+    const end = Math.min(start + batchSize, pairs.length);
+    const batchPairs = pairs.slice(start, end);
+
+    // Separate English and French chunks
+    const engChunks = batchPairs.map(p => p.eng);
+    const frChunks = batchPairs.map(p => p.fr);
+
+    // Shuffle independently
+    const shuffledEng = shuffle(engChunks);
+    const shuffledFr = shuffle(frChunks);
+
+    // Create buttons for English chunks
+    shuffledEng.forEach(text => {
+      const btn = document.createElement('button');
+      btn.className = 'chunk-btn';
+      btn.textContent = text;
+      btn.dataset.lang = 'eng';
+      btn.dataset.text = text;
+      englishChunksDiv.appendChild(btn);
+    });
+
+    // Create buttons for French chunks
+    shuffledFr.forEach(text => {
+      const btn = document.createElement('button');
+      btn.className = 'chunk-btn';
+      btn.textContent = text;
+      btn.dataset.lang = 'fr';
+      btn.dataset.text = text;
+      frenchChunksDiv.appendChild(btn);
+    });
+  }
+
+  function clearSelection() {
+    if (selectedEnglish) selectedEnglish.classList.remove('selected');
+    if (selectedFrench) selectedFrench.classList.remove('selected');
+    selectedEnglish = null;
+    selectedFrench = null;
+  }
+
+  function findPairIndex(engText, frText) {
+    // Search only in current batch
+    const start = currentBatchIndex * batchSize;
+    const end = Math.min(start + batchSize, pairs.length);
+    for(let i = start; i < end; i++) {
+      if(pairs[i].eng === engText && pairs[i].fr === frText) return i;
+    }
+    return -1;
+  }
+
+  function handleClick(event) {
+    if (!event.target.classList.contains('chunk-btn')) return;
+
+    const lang = event.target.dataset.lang;
+
+    if (lang === 'eng') {
+      if (selectedEnglish === event.target) {
+        selectedEnglish.classList.remove('selected');
+        selectedEnglish = null;
+        return;
+      }
+      if (selectedEnglish) selectedEnglish.classList.remove('selected');
+      selectedEnglish = event.target;
+      selectedEnglish.classList.add('selected');
+    } else if (lang === 'fr') {
+      if (selectedFrench === event.target) {
+        selectedFrench.classList.remove('selected');
+        selectedFrench = null;
+        return;
+      }
+      if (selectedFrench) selectedFrench.classList.remove('selected');
+      selectedFrench = event.target;
+      selectedFrench.classList.add('selected');
+    }
+
+    if (selectedEnglish && selectedFrench) {
+      const engText = selectedEnglish.dataset.text;
+      const frText = selectedFrench.dataset.text;
+      const idx = findPairIndex(engText, frText);
+
+      if (idx !== -1) {
+        feedback.textContent = "Correct match! 🎉";
+
+        // Remove matched buttons
+        selectedEnglish.style.display = 'none';
+        selectedFrench.style.display = 'none';
+
+        matchedCount++;
+
+        clearSelection();
+
+        // Check if batch completed
+        const batchPairsCount = Math.min(batchSize, pairs.length - currentBatchIndex*batchSize);
+        if(matchedCount === batchPairsCount) {
+          currentBatchIndex++;
+          if(currentBatchIndex * batchSize >= pairs.length) {
+            feedback.textContent = '';
+            congrats.style.display = 'block';
+          } else {
+            setTimeout(() => {
+              renderBatch();
+              feedback.textContent = '';
+            }, 1000);
+          }
+        }
+      } else {
+        feedback.textContent = "Incorrect match. Try again.";
+        setTimeout(() => {
+          clearSelection();
+          feedback.textContent = '';
+        }, 1500);
+      }
+    }
+  }
+
+  document.body.addEventListener('click', handleClick);
+
+  renderBatch();
+</script>
+
+</body>
+</html>
