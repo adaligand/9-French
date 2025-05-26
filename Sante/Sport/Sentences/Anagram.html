@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anagram</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+.container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    .title {
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .subtitle {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .counter {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            border: 2px solid #ccc;
+            color: #000000;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-4px);
+        }
+        
+        .englishText-box {
+            margin-bottom: 10px;
+            font-size: 20px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: #f0f0f0;
+            text-align: center;
+            width: 80%;
+            box-sizing: border-box;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .letter-container {
+            text-align: center;
+        }
+
+        .anagram-letter {
+            cursor: pointer;
+            padding: 5px 10px;
+            margin: 0 5px;
+            font-size: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .game-container {
+            margin-top: 20px;
+            font-size: 18px;
+            padding: 5px;
+            text-align: justify;
+            display: inline-block;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .frenchText {
+            text-align: left;
+            font-weight: normal;
+            font-size: 22px;
+        }
+
+        .inserted-letter {
+            font-weight: normal;
+        }
+        
+        .anagram-letter:hover {
+            background-color: #f0f0f0;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Anagram</div>
+        <div class="subtitle">Unjumble the words.</div>
+        
+        <div class="exercise-box">
+            <div class="counter hide" id="counter">1/10</div>
+            <div class="englishText-box hide" id="englishText"></div>
+            <div id="englishSentences" class="hide">
+                <div class="english-sentence">unI wake up at seven o'clock.</div>
+                <div class="english-sentence">deuxI take a shower in the morning.</div>
+                <div class="english-sentence">troisI go to work by car.</div>
+                <div class="english-sentence">quatreI wake up at seven o'clock.</div>
+                <div class="english-sentence">cinqI take a shower in the morning.</div>
+                <div class="english-sentence">sixI travel by car.</div>
+                <div class="english-sentence">septI wake up at seven o'clock.</div>
+                <div class="english-sentence">huitI take a shower in the morning.</div>
+                <div class="english-sentence">neufI go to work by car.</div>
+                <div class="english-sentence">dixI wake up at seven o'clock.</div>
+            </div>
+            <div id="frenchSentences" class="hide">
+                <div class="french-sentence">Je me lève à sept heures.</div>
+                <div class="french-sentence">Je prends une douche le matin.</div>
+                <div class="french-sentence">Je vais au travail en voiture.</div>
+                <div class="french-sentence">Je me lève à sept heures.</div>
+                <div class="french-sentence">Je prends une douche le matin.</div>
+                <div class="french-sentence">Je voyage en voiture.</div>
+                <div class="french-sentence">Je me lève à sept heures.</div>
+                <div class="french-sentence">Je prends une douche le matin.</div>
+                <div class="french-sentence">Je vais au travail en voiture.</div>
+                <div class="french-sentence">Je me lève à sept heures.</div>
+            </div>
+            <button id="generate-btn">Generate Exercise</button>
+            <div class="letter-container hide" id="letter-container">
+                <h2 class="frenchText center" id="anagram"></h2>
+                <div id="letter-buttons"></div>
+            </div>
+            <button id="next-btn" class="hide">Next</button>
+            <button id="reset-btn" class="hide">Reset</button>
+        </div>
+    </div>
+
+  <script>
+    const englishSentences = document.querySelectorAll("#englishSentences .english-sentence");
+        const frenchSentences = document.querySelectorAll("#frenchSentences .french-sentence");
+        let currentWordIndex = 0;
+        let currentWordAnagram = '';
+        let currentSentenceIndex = 0;
+        let selectedSentences = [];
+
+        window.onload = function() {
+            generateRandomOrder();
+            displaySentence();
+            document.getElementById("generate-btn").classList.remove("hide"); // Ensure generate button is visible
+        };
+
+        document.getElementById("generate-btn").addEventListener("click", function() {
+            document.getElementById("englishText").classList.remove("hide");
+            document.getElementById("counter").classList.remove("hide");
+            document.getElementById("letter-container").classList.remove("hide");
+            document.getElementById("generate-btn").classList.add("hide");
+            generateExercise();
+        });
+
+        document.getElementById("next-btn").addEventListener("click", function() {
+            currentSentenceIndex++;
+            const words = selectedSentences[currentSentenceIndex].french.match(/[\wÀ-ÿ]+|[^\s\wÀ-ÿ]/g);
+            
+            if (currentSentenceIndex < selectedSentences.length - 1) {
+                updateCounter();
+                displaySentence();
+                generateExercise(); // Auto-generate the next exercise
+                document.getElementById("next-btn").classList.add("hide");
+                document.getElementById("letter-container").classList.remove("hide");
+                document.getElementById("englishText").classList.remove("hide");
+            } else if (currentSentenceIndex === selectedSentences.length - 1 && currentWordIndex === words.length) {
+                updateCounter();
+                displaySentence();
+                generateExercise(); // Auto-generate the last exercise
+                document.getElementById("next-btn").classList.add("hide");
+                document.getElementById("reset-btn").classList.remove("hide");
+            } else if (currentSentenceIndex === selectedSentences.length - 1) {
+                // Reached the last sentence, hide the Next button
+                updateCounter();
+                displaySentence();
+                generateExercise(); // Auto-generate the last exercise
+                document.getElementById("next-btn").classList.add("hide");
+            }
+        });
+
+        document.getElementById("reset-btn").addEventListener("click", function() {
+            currentSentenceIndex = 0;
+            generateRandomOrder();
+            displaySentence();
+            document.getElementById("letter-container").classList.add("hide");
+            document.getElementById("generate-btn").classList.remove("hide");
+            document.getElementById("reset-btn").classList.add("hide");
+            updateCounter();
+        });
+
+        document.addEventListener("keydown", function(event) {
+            const key = event.key.toLowerCase();
+            const letterButtons = document.querySelectorAll(".anagram-letter");
+            letterButtons.forEach(function(button) {
+                if (button.textContent.toLowerCase() === key) {
+                    revealLetter(button.textContent, button);
+                }
+            });
+        });
+
+    function displayAnagram() {
+        const anagramContainer = document.getElementById("anagram");
+        const letterButtonsContainer = document.getElementById("letter-buttons");
+        const words = selectedSentences[currentSentenceIndex].french.match(/[\wÀ-ÿ]+|[^\s\wÀ-ÿ]/g);
+
+        let fullAnagram = '';
+        for (let i = 0; i < words.length; i++) {
+            const word = words[i];
+            if (/[^\p{L}\s]/u.test(word)) {
+                fullAnagram += word;
+                continue;
+            }
+            const wordWithoutPunctuation = word.replace(/[^\p{L}]/ug, "");
+            if (i !== 0 && !/[^\p{L}\s]/u.test(words[i - 1])) {
+                fullAnagram += ' ';
+            }
+            if (i < currentWordIndex) {
+                fullAnagram += word;
+            } else if (i === currentWordIndex) {
+                fullAnagram += currentWordAnagram;
+            } else {
+                fullAnagram += '<span class="inserted-letter">' + '*'.repeat(wordWithoutPunctuation.length) + '</span>';
+            }
+        }
+        anagramContainer.innerHTML = fullAnagram;
+
+        // Clear previous letter buttons
+        letterButtonsContainer.innerHTML = '';
+
+        // Generate clickable letters for the current word
+        const currentWord = words[currentWordIndex].replace(/[^\p{L}]/ug, "");
+        const clickableLetters = shuffleArray(currentWord.split(''));
+        for (let letter of clickableLetters) {
+            const button = document.createElement("button");
+            button.textContent = letter;
+            button.classList.add("anagram-letter");
+            button.addEventListener("click", function() {
+                revealLetter(letter, button);
+            });
+            letterButtonsContainer.appendChild(button);
+        }
+    }
+function revealLetter(letter, button) {
+    const words = selectedSentences[currentSentenceIndex].french.match(/[\wÀ-ÿ]+|[^\s\wÀ-ÿ]/g);
+    const word = words[currentWordIndex];
+
+    // Check if the word contains punctuation
+    if (/[^\p{L}\s]/u.test(word)) {
+        alert("Punctuation marks are not clickable.");
+        return;
+    }
+
+    // Get the word without punctuation
+    const wordWithoutPunctuation = word.replace(/[^\p{L}]/ug, "");
+
+    // Find the index in the currentWordAnagram where the next letter should go
+    const indexToReplace = currentWordAnagram.indexOf('*');
+
+    // Check if the clicked letter matches the correct letter in the word
+    if (letter === wordWithoutPunctuation[indexToReplace]) {
+        // Replace the asterisk in currentWordAnagram with the correct letter
+        currentWordAnagram = currentWordAnagram.substring(0, indexToReplace) + letter + currentWordAnagram.substring(indexToReplace + 1);
+
+        // Update the display of the anagram
+        displayAnagram();
+
+        // If the current word is completely solved
+        if (!currentWordAnagram.includes('*')) {
+            // Move to the next word that is not punctuation
+            currentWordIndex++;
+            while (currentWordIndex < words.length && /[^\p{L}\s]/u.test(words[currentWordIndex])) {
+                currentWordIndex++;
+            }
+
+            // If there are more words in the sentence
+            if (currentWordIndex < words.length) {
+                // Generate a new anagram for the next word
+                currentWordAnagram = '*'.repeat(words[currentWordIndex].replace(/[^\p{L}]/ug, "").length);
+                displayAnagram();
+            } else {
+                // All words in the sentence are solved
+                alert("Congratulations! You solved the sentence.");
+                if (currentSentenceIndex === selectedSentences.length - 1) {
+                    // Last sentence completed, show Reset button only
+                    document.getElementById("reset-btn").classList.remove("hide");
+                    document.getElementById("next-btn").classList.add("hide");
+                } else {
+                    // Show Next button for the next sentence
+                    document.getElementById("next-btn").classList.remove("hide");
+                }
+            }
+        }
+
+         // Remove the clicked letter button
+         button.remove();
+    } else {
+    // Ignore incorrect letter without showing an alert
+    return;
+}
+}
+
+    function shuffleArray(array) {
+        const shuffledArray = array.slice();
+        for (let i = shuffledArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+        }
+        return shuffledArray;
+    }
+
+    function generateRandomOrder() {
+        selectedSentences = [];
+        const order = shuffleArray([...Array(englishSentences.length).keys()]);
+        for (let i of order) {
+            selectedSentences.push({
+                english: englishSentences[i].textContent.trim(),
+                french: frenchSentences[i].textContent.trim()
+            });
+        }
+    }
+
+    function displaySentence() {
+        document.getElementById("englishText").textContent = selectedSentences[currentSentenceIndex].english;
+    }
+
+    function updateCounter() {
+        document.getElementById("counter").textContent = (currentSentenceIndex + 1) + "/10";
+    }
+
+    function generateExercise() {
+        currentWordIndex = 0;
+        currentWordAnagram = '*'.repeat(selectedSentences[currentSentenceIndex].french.match(/[\wÀ-ÿ]+|[^\s\wÀ-ÿ]/g)[currentWordIndex].replace(/[^\p{L}]/ug, "").length);
+        displayAnagram();
+    }
+</script>
+
+</body>
+</html>
