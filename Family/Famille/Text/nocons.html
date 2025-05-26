@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No consonants</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px; /* Adjust font size as needed */
+      font-family: Arial, sans-serif; /* Adjust font family as needed */
+    }
+    .title {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+        }
+    .subtitle {
+    font-size: 18px;
+    margin-bottom: 10px;
+        }
+    .english-text-box {
+      margin-bottom: 20px;
+      font-size: 20px;
+      padding: 10px;
+      border: 2px solid #ccc;
+      text-align: justify;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      font-size: 20px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 15px;
+      margin: 2px;
+      background-color: #f9f9f9;
+      color: #000000;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    .hide {
+      display: none;
+    }
+    #exerciseOutput {
+      font-size: 18px;
+      line-height: 2;
+      text-align: justify;
+      word-spacing: 0.5em; /* Adjust word spacing as needed */
+    }
+    input {
+      width: 13px; /* Adjust the width as needed */
+      text-align: center;
+      border: none;
+      border-left: transparent;
+      border-right: transparent;
+      border-top: transparent;
+      border-bottom: 1px solid black;
+      border-bottom-width: 0.5px; /* Adjust the thickness of the bottom border */
+      transition: border 0.3s;
+      font-size: inherit;
+      font-family: inherit;
+      margin-right: 2px; /* Add a small gap between adjacent textboxes */
+    }
+    input:focus {
+      outline: none;
+      border: none;
+      border-left: transparent;
+      border-right: transparent;
+      border-top: transparent;
+      border-bottom: 1px solid black;
+      border-bottom-width: 0.5px; /* Adjust the thickness of the bottom border */
+    }
+    .keyboard-container {
+      margin-top: 20px;
+      text-align: center; /* Center the text horizontally */
+    }
+    /* Updated keyboard button styles */
+    .keyboard-button {
+      font-size: 18px;
+      padding: 10px 15px;
+      margin: 2px;
+      border: none;
+      border-radius: 10px;
+      background-color: #e9e7e780; /* Medium dark grey background */
+      color: #000000; /* White text */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add shadow for volume */
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .keyboard-button:hover {
+      background-color: #A9A9A9; /* Slightly darker grey background on hover */
+      transform: translateY(-4px); /* Add slight lift effect on hover */
+    }
+    /* Styles for dropdown menus */
+    select {
+      width: 13%;
+      padding: 5px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      height: 35px;
+    }
+ 
+  </style>
+</head>
+<body onload="initialize()">
+  <div class="container">
+    <div class="title">Consonator</div>
+    <div class="subtitle" id="subtitle">Missing consonants: click on Generate exercise.</div>
+    <div class="english-text-box">
+      <div id="englishText">I got up at seven o'clock and I had a shower in the bathroom. I had breakfast in the kitchen, and then I cleaned my teeth. I left the house at eight o'clock to go to school. I took the bus, and I arrived at school at a quarter to nine. I had lunch in the canteen at one o'clock. I left school at half past three and I went home by bus. I got home at about four o'clock. I watched a bit of TV, then I had dinner at six o'clock. After dinner I did my homework, I read for a bit and I listened to the radio. Then at ten o'clock I had a wash and I went to bed.</div>
+    </div>
+    <div id="frenchText" class="hide">Je me suis levé à sept heures et je me suis douché dans la salle de bains. J'ai pris le petit déjeuner dans la cuisine, et puis je me suis brossé les dents. J'ai quitté la maison à huit heures pour aller au collège. J'ai pris le bus, et je suis arrivé au collège à neuf heures moins le quart. J'ai pris le déjeuner à la cantine à une heure. J'ai quitté le collège à trois heures et demie et je suis rentré en bus. Je suis arrivé chez moi vers quatre heures. J'ai regardé un peu la télé, puis j'ai pris le dîner à six heures. Après le dîner, j'ai fait mes devoirs, j'ai lu un peu et j'ai écouté la radio. Puis, à dix heures, je me suis lavé et je me suis couché.</div>
+    </div>
+        <button onclick="generateExercise()">Generate Exercise</button>
+
+          <div id="exerciseOutput" class="hide"></div>
+          <div id="feedback" class="hide"></div>
+          <button id="resetButton" class="hide" onclick="resetExercise()">Reset Exercise</button>
+        </div>
+      </div>
+    </div>
+    <!-- Keyboard container -->
+    <div class="keyboard-container"></div>
+  </div>
+<script>
+  var subtitle; // Declare subtitle variable outside the functions
+  var frenchText; // Variable to store the French text
+  var englishText; // Variable to store the English text
+
+  function initialize() {
+    subtitle = document.getElementById('subtitle'); // Assign subtitle element to the variable
+    frenchText = document.getElementById('frenchText').innerText.trim(); // Get French text
+    englishText = document.querySelector('.english-text-box').innerText.trim(); // Get English text
+    generateKeyboard(); // Generate the keyboard buttons on page load
+  }
+
+  // Define an array containing consonants
+  var consonants = ['ç', 'ñ', 'ß'];
+
+  function generateKeyboard() {
+    var keyboardContainer = document.querySelector('.keyboard-container');
+    consonants.forEach(function (consonant) {
+      var button = document.createElement('button');
+      button.innerHTML = consonant; // Use innerHTML to handle HTML entities
+      button.className = 'keyboard-button';
+      button.setAttribute('onclick', 'insertLetter("' + consonant + '")');
+      keyboardContainer.appendChild(button);
+    });
+  }
+
+  function generateExercise() {
+    var modifiedText = '';
+    for (var i = 0; i < frenchText.length; i++) {
+      var char = frenchText[i];
+      if (isConsonant(char.toLowerCase())) {
+        // Insert the <input> element here
+        modifiedText += '<input type="text" maxlength="1" size="1" value="" data-original="' + char + '" oninput="moveToNext(this); handleBackspace(this, event); handleEnterKey(this, event)">';
+      } else {
+        modifiedText += char;
+      }
+    }
+
+    var exerciseOutput = document.getElementById('exerciseOutput');
+    exerciseOutput.innerHTML = modifiedText;
+    exerciseOutput.classList.remove('hide');
+
+    // Hide the French text
+    document.getElementById('frenchText').classList.add('hide');
+
+    // Hide the subtitle
+    subtitle.classList.add('hide');
+
+    // Focus on the first input box
+    var firstInput = exerciseOutput.querySelector('input');
+    if (firstInput) {
+      firstInput.focus();
+    }
+  }
+
+  function isConsonant(char) {
+    // Remove accents from the character and then check if it's a consonant
+    var normalizedChar = char.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return /^[bcdfghjklmnpqrstvwxyzçBCDFGHJKLMNPQRSTVWXYZÇÑñß]$/.test(normalizedChar);
+  }
+
+  var focusedInput; // Variable to store the currently focused input element
+
+  function insertLetter(letter) {
+    if (focusedInput) {
+      focusedInput.value = letter;
+      moveToNext(focusedInput);
+    }
+  }
+
+  document.addEventListener('focusin', function (event) {
+    if (event.target.tagName.toLowerCase() === 'input') {
+      focusedInput = event.target;
+    }
+  });
+
+  function moveToNext(input) {
+    if (input.value.length >= 1) {
+      var nextInput = input.nextElementSibling;
+      if (nextInput && nextInput.tagName === 'INPUT') {
+        nextInput.focus();
+        checkExercise(); // Call checkExercise after moving to the next input
+      }
+    }
+  }
+
+  function handleBackspace(input, event) {
+    if (event.key === 'Backspace' && input.value.length === 0) {
+      var prevInput = input.previousElementSibling;
+      if (prevInput && prevInput.tagName === 'INPUT') {
+        prevInput.focus();
+        prevInput.value = ''; // Empty the content of the previous input box
+        prevInput.style.backgroundColor = 'transparent'; // Reset the background color to transparent
+      }
+    }
+  }
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Backspace') {
+      handleBackspace(document.activeElement, event);
+    }
+  });
+
+  function handleEnterKey(input, event) {
+    if (event.key === 'Enter') {
+      checkExercise();
+    }
+  }
+
+  function checkExercise() {
+    var filledInputs = document.querySelectorAll('#exerciseOutput input');
+    var correctCount = 0;
+    var incorrectCount = 0;
+
+    filledInputs.forEach(function (input) {
+      var userInput = input.value.trim().toLowerCase();
+      var originalChar = input.dataset.original.toLowerCase();
+
+      if (userInput === '') {
+        // Remove background color if the input box is empty
+        input.style.backgroundColor = 'transparent';
+        return; // Skip further processing for empty input boxes
+      }
+
+      if (userInput === originalChar) {
+        // Apply light green color to correct inputs
+        input.style.backgroundColor = '#cef4ce'; // Light green
+        correctCount++;
+      } else {
+        // Apply light red color to incorrect inputs
+        input.style.backgroundColor = '#ffb6c19c'; // Light red
+        incorrectCount++;
+      }
+    });
+
+    var feedback = document.getElementById('feedback');
+    var resetButton = document.getElementById('resetButton');
+
+    if (correctCount === filledInputs.length) {
+      feedback.textContent = 'All answers are correct!';
+      resetButton.classList.remove('hide'); // Show reset button if all answers are correct
+    } else {
+      feedback.textContent = 'Correct: ' + correctCount + ', Incorrect: ' + incorrectCount;
+      resetButton.classList.add('hide'); // Hide reset button if there are errors
+    }
+    feedback.classList.remove('hide');
+  }
+
+  function resetExercise() {
+    // Clear text input, hide exercise output and feedback
+    document.getElementById('exerciseOutput').innerHTML = '';
+    document.getElementById('feedback').classList.add('hide');
+    document.getElementById('resetButton').classList.add('hide');
+    // Remove background color from input boxes
+    var filledInputs = document.querySelectorAll('#exerciseOutput input');
+    filledInputs.forEach(function (input) {
+      input.style.backgroundColor = 'transparent';
+    });
+
+    // Show subtitle
+    subtitle.classList.remove('hide');
+  }
+</script>
+
+</body>
+</html>
