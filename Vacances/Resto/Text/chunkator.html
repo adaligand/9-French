@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chunkator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    .title {
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .subtitle {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #f9f9f9;
+      border: 2px solid #ccc;
+      color: #000000;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    .hide {
+      display: none;
+    }
+    .english-text-box {
+      border: 2px solid #ccc;
+      padding: 10px;
+      font-size: 20px;
+      text-align: justify;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    #generateButtonChunk {
+      border: 2px solid #ccc;
+    }
+    #exerciseOutput {
+      font-size: 20px;
+      line-height: 2;
+      text-align: justify;
+      word-spacing: 0.5em;
+      margin-top: 20px;
+    }
+   .draggable-word {
+  display: inline-flex; /* Use flexbox for centering */
+  align-items: center; /* Vertically center the content */
+  justify-content: center; /* Horizontally center the content */
+  cursor: pointer;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  border: 1px solid black;
+  padding: 2px 10px;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  height: 20px; /* Set a fixed height */
+    overflow: hidden; /* Hide overflow text */
+}
+    .correct-chunk {
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+    }
+    .wrong-chunk {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+    }
+    .dropzone-container {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .dropzone {
+      border: 2px dashed #ccc;
+      min-height: 20px;
+      font-size: 20px;
+      height: auto;
+      border-radius: 10px;
+      display: inline-block;
+      padding: 5px 10px;
+      vertical-align: top;
+    }
+    select {
+      width: 20%;
+      padding: 5px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      height: 35px;
+      }
+    }
+  </style>
+</head>
+<body onload="initializeChunk()">
+  <div class="container">
+    <div class="title">Chunkator</div>
+    <div class="subtitle" id="subtitle">Unjumble the chunks: Use the dropdown menu to select the size of the chunks you want to create and click on Generate exercise.</div>
+    <br>
+    <div class="english-text-box">
+      <div id="englishText">I got up at seven o'clock and I had a shower in the bathroom. I had breakfast in the kitchen, and then I cleaned my teeth. I left the house at eight o'clock to go to school. I took the bus, and I arrived at school at a quarter to nine. I had lunch in the canteen at one o'clock. I left school at half past three and I went home by bus. I got home at about four o'clock. I watched a bit of TV, then I had dinner at six o'clock. After dinner I did my homework, I read for a bit and I listened to the radio. Then at ten o'clock I had a wash and I went to bed.</div>
+    </div>
+    <div id="frenchText" class="hide">Je me suis levé à sept heures et je me suis douché dans la salle de bains. J'ai pris le petit déjeuner dans la cuisine, et puis je me suis brossé les dents. J'ai quitté la maison à huit heures pour aller au collège. J'ai pris le bus, et je suis arrivé au collège à neuf heures moins le quart. J'ai pris le déjeuner à la cantine à une heure. J'ai quitté le collège à trois heures et demie et je suis rentré en bus. Je suis arrivé chez moi vers quatre heures. J'ai regardé un peu la télé, puis j'ai pris le dîner à six heures. Après le dîner, j'ai fait mes devoirs, j'ai lu un peu et j'ai écouté la radio. Puis, à dix heures, je me suis lavé et je me suis couché.</div>
+    <div class="input-container">
+      <label for="chunkSize">Select Chunk Size:</label>
+      <select id="chunkSize">
+        <option value="1">Single Words</option>
+        <option value="2">Small chunks</option>
+        <option value="4">Medium chunks</option>
+        <option value="6">Big chunks</option>
+      </select>
+      <button id="generateButtonChunk" onclick="generateChunk()">Generate Exercise</button>
+      <br>
+    </div>
+    <div id="exerciseOutput" class="hide"></div>
+    <div class="dropzone-container hide" id="dropZones"></div>
+    <div id="feedback" class="hide"></div>
+    <div class="ruled-lines print-only">
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+    </div>
+  </div>
+  <script>
+    var originalChunks = [];
+    var currentChunkIndex = 0;
+
+    function initializeChunk() {
+      document.getElementById('englishText').classList.remove('hide');
+    }
+
+    function generateChunk() {
+      var textInput = document.getElementById('frenchText').textContent;
+      var exerciseOutput = document.getElementById('exerciseOutput');
+      exerciseOutput.innerHTML = '';
+      var dropZones = document.getElementById('dropZones');
+      dropZones.innerHTML = '';
+      var subtitle = document.getElementById('subtitle');
+      subtitle.classList.add('hide');
+      var chunkSize = parseInt(document.getElementById('chunkSize').value);
+      originalChunks = getWordChunks(textInput, chunkSize);
+      var shuffledChunks = shuffleArray([...originalChunks]);
+
+      for (var i = 0; i < originalChunks.length; i++) {
+        var dropZone = document.createElement('div');
+        dropZone.classList.add('dropzone');
+        dropZones.appendChild(dropZone);
+      }
+
+      for (var i = 0; i < shuffledChunks.length; i++) {
+        var chunk = shuffledChunks[i].join(' ');
+        var chunkElement = document.createElement('div');
+        chunkElement.textContent = chunk;
+        chunkElement.classList.add('draggable-word');
+        chunkElement.setAttribute('onclick', 'selectChunk(this)');
+        exerciseOutput.appendChild(chunkElement);
+      }
+
+      var ruledLines = document.querySelector('.ruled-lines');
+      ruledLines.innerHTML = '';
+
+      var numLines = 20;
+      for (var i = 0; i < numLines; i++) {
+        var ruledLine = document.createElement('div');
+        ruledLine.classList.add('ruled-line');
+        ruledLines.appendChild(ruledLine);
+      }
+
+      exerciseOutput.classList.remove('hide');
+      dropZones.classList.remove('hide');
+      document.getElementById('feedback').classList.add('hide');
+      currentChunkIndex = 0;
+    }
+
+    function getWordChunks(text, chunkSize) {
+      var words = text.split(/\s+/).filter(Boolean);
+      var chunks = [];
+      for (var i = 0; i < words.length; i += chunkSize) {
+        chunks.push(words.slice(i, i + chunkSize));
+      }
+      return chunks;
+    }
+
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
+    }
+
+    function selectChunk(element) {
+      var chunkText = element.textContent;
+      var chunkWords = chunkText.split(/\s+/).filter(Boolean);
+      var correctChunk = originalChunks[currentChunkIndex].join(' ');
+
+      if (chunkWords.join(' ') === correctChunk) {
+        var dropZones = document.getElementById('dropZones');
+        var dropZone = dropZones.children[currentChunkIndex];
+        dropZone.textContent = chunkText;
+        dropZone.classList.add('correct-chunk');
+        element.remove();
+        currentChunkIndex++;
+
+        if (currentChunkIndex === originalChunks.length) {
+          document.getElementById('feedback').textContent = 'All chunks are in the correct order!';
+          document.getElementById('feedback').classList.remove('hide');
+        }
+      } else {
+        element.classList.add('wrong-chunk');
+        setTimeout(() => {
+          element.classList.remove('wrong-chunk');
+        }, 2000);
+      }
+    }
+  </script>
+</body>
+</html>
