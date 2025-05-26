@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vowelator</title>
+  <style>
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+      font-family: Arial, sans-serif;
+    }
+    .english-text-box {
+      margin-bottom: 20px;
+      font-size: 20px;
+      text-align: justify;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      font-size: 20px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 15px;
+      margin: 2px;
+      background-color: #f9f9f9;
+      color: #000000;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    .hide {
+      display: none;
+    }
+    #exerciseOutput {
+      font-size: 20px;
+      line-height: 2;
+      text-align: justify;
+      word-spacing: 0.5em;
+    }
+    input {
+      width: 20px;
+      text-align: center;
+      border: none;
+      border-left: transparent;
+      border-right: transparent;
+      border-top: transparent;
+      border-bottom: 1px solid black;
+      border-bottom-width: 0.5px;
+      transition: border 0.3s;
+      font-size: inherit;
+      font-family: inherit;
+      margin-right: 2px;
+    }
+    input:focus {
+      outline: none;
+      border: none;
+      border-left: transparent;
+      border-right: transparent;
+      border-top: transparent;
+      border-bottom: 1px solid black;
+      border-bottom-width: 0.5px;
+    }
+    .keyboard-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .keyboard-button {
+      font-size: 20px;
+      padding: 10px 15px;
+      margin: 2px;
+      border: none;
+      border-radius: 10px;
+      background-color: #e9e7e780;
+      color: #000000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .keyboard-button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    select {
+      width: 150px;
+      padding: 5px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      height: 35px;
+    }
+    @media screen {
+      .print-title-container {
+        display: none;
+      }
+      .on-screen-title {
+        font-size: 40px;
+        font-weight: bold;
+        text-align: center;
+      }
+      .subtitle {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+      .screen-title {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body onload="initialize()">
+  <div class="container">
+    <div class="on-screen-title">Vowelator</div>
+    <div class="subtitle" id="subtitle">Missing vowels: Use the dropdown menu to select your language keyboard and click on Generate exercise.</div>
+         </div>
+   <div class="english-text-box">
+      <div id="englishText">I got up at seven o'clock and I had a shower in the bathroom. I had breakfast in the kitchen, and then I cleaned my teeth. I left the house at eight o'clock to go to school. I took the bus, and I arrived at school at a quarter to nine. I had lunch in the canteen at one o'clock. I left school at half past three and I went home by bus. I got home at about four o'clock. I watched a bit of TV, then I had dinner at six o'clock. After dinner I did my homework, I read for a bit and I listened to the radio. Then at ten o'clock I had a wash and I went to bed.</div>
+    </div>
+    <div id="frenchText" class="hide">Je me suis levé à sept heures et je me suis douché dans la salle de bains. J'ai pris le petit déjeuner dans la cuisine, et puis je me suis brossé les dents. J'ai quitté la maison à huit heures pour aller au collège. J'ai pris le bus, et je suis arrivé au collège à neuf heures moins le quart. J'ai pris le déjeuner à la cantine à une heure. J'ai quitté le collège à trois heures et demie et je suis rentré en bus. Je suis arrivé chez moi vers quatre heures. J'ai regardé un peu la télé, puis j'ai pris le dîner à six heures. Après le dîner, j'ai fait mes devoirs, j'ai lu un peu et j'ai écouté la radio. Puis, à dix heures, je me suis lavé et je me suis couché.</div>   
+         </p>
+      </div>
+      <!-- Button to generate exercise -->
+      <button onclick="generateExercise()">Generate Exercise</button>
+    <select id="languageSelect">
+      <option value="french">French</option>
+      <option value="german">German</option>
+      <option value="spanish">Spanish</option>
+    </select>
+ 
+    </div>
+    <div class="right-side">
+      <div id="exerciseOutput" class="hide"></div>
+      <div class="keyboard-container"></div>
+      <div id="feedback" class="hide"></div>
+      <button id="resetButton" class="hide" onclick="resetExercise()">Reset Exercise</button>
+    
+  <script>
+    var subtitle;
+
+    function initialize() {
+        generateKeyboard(document.getElementById('languageSelect').value);
+        subtitle = document.getElementById('subtitle');
+    }
+
+    function generateKeyboard(language) {
+        var keyboardContainer = document.querySelector('.keyboard-container');
+        keyboardContainer.innerHTML = '';
+
+        var vowels = [];
+        switch (language) {
+            case 'french':
+                vowels = ['à', 'â', 'ä', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ô', 'ö', 'ù', 'ü', 'û', 'ç'];
+                break;
+            case 'german':
+                vowels = ['ä', 'ö', 'ü', 'ß'];
+                break;
+            case 'spanish':
+                vowels = ['á', 'é', 'í', 'ó', 'ú', 'ñ'];
+                break;
+            default:
+                vowels = ['a', 'e', 'i', 'o', 'u'];
+                break;
+        }
+
+        vowels.forEach(function (vowel) {
+            var button = document.createElement('button');
+            button.innerHTML = vowel;
+            button.className = 'keyboard-button';
+            button.setAttribute('onclick', 'insertLetter("' + vowel + '")');
+            keyboardContainer.appendChild(button);
+        });
+    }
+
+    document.getElementById('languageSelect').addEventListener('change', function () {
+        var selectedLanguage = this.value;
+        generateKeyboard(selectedLanguage);
+    });
+
+  function generateExercise() {
+    var frenchText = document.getElementById('frenchText').innerText.trim();
+    var modifiedText = '';
+
+    for (var i = 0; i < frenchText.length; i++) {
+        var char = frenchText[i];
+        if (isVowel(char.toLowerCase())) {
+            modifiedText += '<input type="text" maxlength="1" size="1" value="" data-original="' + char + '" oninput="moveToNext(this)" onkeydown="handleBackspace(this, event); handleEnter(this, event)">';
+        } else {
+            modifiedText += char;
+        }
+    }
+
+    var exerciseOutput = document.getElementById('exerciseOutput');
+    exerciseOutput.innerHTML = modifiedText;
+    exerciseOutput.classList.remove('hide');
+
+    document.getElementById('frenchText').classList.add('hide');
+    subtitle.classList.add('hide');
+
+    var lastInput = exerciseOutput.querySelector('input:last-child');
+    lastInput.addEventListener('blur', function() {
+        checkExercise();
+    });
+
+    var firstInput = exerciseOutput.querySelector('input');
+    if (firstInput) {
+        firstInput.focus();
+    }
+}
+
+   function isVowel(char) {
+    return ['a', 'e', 'i', 'o', 'u', 'à', 'â', 'ä', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ô', 'ö', 'ù', 'ü', 'û', 'á', 'é', 'í', 'ó', 'ú'].includes(char.toLowerCase());
+}
+    var focusedInput;
+
+    function insertLetter(letter) {
+        if (focusedInput) {
+            focusedInput.value = letter;
+            moveToNext(focusedInput);
+        }
+    }
+
+    document.addEventListener('focusin', function(event) {
+        if (event.target.tagName.toLowerCase() === 'input') {
+            focusedInput = event.target;
+        }
+    });
+function moveToNext(input) {
+    if (input.value.length >= 1) {
+        var nextInput = input.nextElementSibling;
+        if (nextInput && nextInput.tagName === 'INPUT') {
+            nextInput.focus();
+            checkExercise(); // Check the exercise when moving to the next input
+        } else {
+            // If there's no next input, we're at the end, so check the exercise
+            checkExercise();
+        }
+    }
+}
+ function handleBackspace(input, event) {
+    if (event.key === 'Backspace' && input.value.length === 0) {
+        var prevInput = input.previousElementSibling;
+        if (prevInput && prevInput.tagName === 'INPUT') {
+            prevInput.focus();
+            prevInput.style.backgroundColor = 'transparent'; // Clear background color
+        }
+    }
+}
+
+    function handleEnter(input, event) {
+        if (event.key === 'Enter') {
+            checkExercise();
+        }
+    }
+function checkExercise() {
+    var filledInputs = document.querySelectorAll('#exerciseOutput input');
+    var correctAnswers = 0;
+    var incorrectAnswers = 0;
+
+    filledInputs.forEach(function(input) {
+        var userInput = input.value.trim().toLowerCase();
+        var originalChar = input.dataset.original.toLowerCase();
+
+        if (userInput === originalChar) {
+            input.style.backgroundColor = '#cef4ce';
+            correctAnswers++;
+        } else if (userInput !== '') {
+            input.style.backgroundColor = '#ffb6c19c';
+            incorrectAnswers++;
+        } else {
+            input.style.backgroundColor = 'transparent';
+        }
+    });
+
+    var feedback = document.getElementById('feedback');
+    var resetButton = document.getElementById('resetButton');
+
+    if (incorrectAnswers === 0 && correctAnswers === filledInputs.length) {
+        feedback.textContent = 'All answers are correct!';
+        resetButton.classList.remove('hide');
+    } else {
+        feedback.textContent = 'Correct : ' + correctAnswers + ' Incorrect : ' + incorrectAnswers;
+        resetButton.classList.add('hide');
+    }
+    feedback.classList.remove('hide');
+}
+    function resetExercise() {
+        document.getElementById('exerciseOutput').innerHTML = '';
+        document.getElementById('exerciseOutput').classList.add('hide');
+        document.getElementById('feedback').classList.add('hide');
+        document.getElementById('frenchText').classList.remove('hide');
+        document.getElementById('resetButton').classList.add('hide');
+        subtitle.classList.remove('hide');
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.keyCode === 80) {
+            var parentElements = window.parent.document.querySelectorAll('.element-to-hide-on-print');
+            parentElements.forEach(function(element) {
+                element.style.display = 'none';
+            });
+            setTimeout(function() {
+                parentElements.forEach(function(element) {
+                    element.style.display = '';
+                });
+            }, 1000);
+        }
+    });
+
+    generateKeyboard('french');
+  </script>
+</body>
+</html>

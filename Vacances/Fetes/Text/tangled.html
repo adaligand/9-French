@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tangled Translation</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      min-height: 100vh;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+    }
+    h1.title {
+      text-align: center;
+      font-size: 2rem;
+      padding: 1rem 0;
+      color: #333;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      width: 100%;
+      align-items: stretch;
+      padding: 2rem;
+      gap: 1rem;
+      flex-grow: 1;
+      box-sizing: border-box;
+    }
+    .input-box, .center-text {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+    .center-text {
+      text-align: center;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    textarea {
+      flex: 1;
+      resize: none;
+      font-size: 1rem;
+      padding: 1rem;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      min-height: 150px;
+    }
+    .feedback {
+      text-align: center;
+      font-weight: bold;
+      padding: 0.5rem;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #f9f9f9;
+      border: 2px solid #ccc;
+      color: #000000;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      margin-top: 0.75rem;
+    }
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+    .highlight {
+      background-color: #ffe4b3;
+      border-radius: 4px;
+      padding: 0 4px;
+    }
+    .result-box {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+    }
+    /* Make buttons container flex with spacing */
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="title">Tangled Translation</h1>
+
+  <div class="container">
+    <!-- French Input -->
+    <div class="input-box">
+      <h3>Traduction française</h3>
+      <textarea id="frenchInput"></textarea>
+      <div class="feedback" id="frenchFeedback"></div>
+      <div class="result-box" id="frenchResult"></div>
+      <button onclick="checkFrench()">Check French</button>
+    </div>
+
+    <!-- Hybrid Sentence -->
+    <div class="center-text">
+      In ma town, il y a a lot of choses to do et to see. On peut go au shopping center où there are de nombreux clothing stores et un big parking. There is aussi a beautiful bibliothèque near la mairie and un grand hospital. Pour s'amuser, there is une discothèque and a plage magnifique. In my quartier, there is une piscine and un château, but il n'y a pas any church ou any post office. Les transports en commun is trop expensive et there is beaucoup de traffic, donc it is très noisy. Malheureusement, there is rien to do pour les jeunes.
+    </div>
+
+    <!-- English Input -->
+    <div class="input-box">
+      <h3>English Translation</h3>
+      <textarea id="englishInput"></textarea>
+      <div class="feedback" id="englishFeedback"></div>
+      <div class="result-box" id="englishResult"></div>
+      <button onclick="checkEnglish()">Check English</button>
+    </div>
+  </div>
+
+  <script>
+    const correctFrench = "Dans ma ville, il y a beaucoup de choses à faire et à voir. On peut aller au centre commercial où il y a de nombreux magasins de vêtements et un grand parking. Il y a aussi une belle bibliothèque près de la mairie et un grand hôpital. Pour s'amuser, il y a une discothèque et une plage magnifique. Dans mon quartier, il y a une piscine et un château, mais il n'y a pas d'église ou de poste. Les transports en commun sont trop chers et il y a beaucoup de circulation, donc c'est très bruyant. Malheureusement, il n'y a rien à faire pour les jeunes.";
+    const correctEnglish = "In my town, there are a lot of things to do and to see. You can go to the shopping center where there are many clothing stores and a big carpark. There is also a beautiful library near the town hall and a big hospital. For entertainment, there is a nightclub and a wonderful beach. In my neighborhood, there is a pool and a castle, but there isn't any church or any post office. Public transport is too expensive and there is a lot of traffic, therefore it is very noisy. Unfortunately, there is nothing to do for young people.";
+
+    function highlightMistakes(userText, correctText) {
+      const userWords = userText.split(/\s+/);
+      const correctWords = correctText.split(/\s+/);
+      let mistakeCount = 0;
+      const highlighted = userWords.map((word, i) => {
+        if (correctWords[i] && word.toLowerCase() === correctWords[i].toLowerCase()) {
+          return word;
+        } else {
+          mistakeCount++;
+          return `<span class="highlight">${word}</span>`;
+        }
+      }).join(' ');
+      return { highlighted, mistakeCount };
+    }
+
+    function checkFrench() {
+  const userFrench = document.getElementById('frenchInput').value.trim();
+  const frenchFeedback = document.getElementById('frenchFeedback');
+  const frenchResult = document.getElementById('frenchResult');
+
+  if (userFrench.toLowerCase() === correctFrench.toLowerCase()) {
+    frenchFeedback.textContent = '✅ Correct';
+    frenchFeedback.style.color = 'green';
+    frenchResult.innerHTML = '';
+  } else {
+    const { highlighted, mistakeCount } = highlightMistakes(userFrench, correctFrench);
+    if (mistakeCount === 0) {
+      frenchFeedback.textContent = '✅ Correct';
+      frenchFeedback.style.color = 'green';
+      frenchResult.innerHTML = highlighted;
+    } else {
+      frenchFeedback.textContent = `❌ ${mistakeCount} mistake(s)`;
+      frenchFeedback.style.color = 'red';
+      frenchResult.innerHTML = highlighted;
+    }
+  }
+}
+
+function checkEnglish() {
+  const userEnglish = document.getElementById('englishInput').value.trim();
+  const englishFeedback = document.getElementById('englishFeedback');
+  const englishResult = document.getElementById('englishResult');
+
+  if (userEnglish.toLowerCase() === correctEnglish.toLowerCase()) {
+    englishFeedback.textContent = '✅ Correct';
+    englishFeedback.style.color = 'green';
+    englishResult.innerHTML = '';
+  } else {
+    const { highlighted, mistakeCount } = highlightMistakes(userEnglish, correctEnglish);
+    if (mistakeCount === 0) {
+      englishFeedback.textContent = '✅ Correct';
+      englishFeedback.style.color = 'green';
+      englishResult.innerHTML = highlighted;
+    } else {
+      englishFeedback.textContent = `❌ ${mistakeCount} mistake(s)`;
+      englishFeedback.style.color = 'red';
+      englishResult.innerHTML = highlighted;
+    }
+  }
+}
+
+  </script>
+</body>
+</html>
