@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listening Exercise</title>
+  <style>
+    /* CSS styles */
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+      font-family: Arial, sans-serif;
+    }
+
+    .flex-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 2px;
+      background-color: #10148; /* Corrected background color */
+      color: #000000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 24px;
+    }
+
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+
+    .hide {
+      display: none;
+    }
+
+    /* Updated keyboard button styles */
+    .keyboard-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    .keyboard-container button {
+      font-size: 20px;
+      padding: 10px 15px;
+      margin: 2px;
+      border: none;
+      border-radius: 10px;
+      background-color: #10148; /* Medium dark grey background */
+      color: #000000; /* White text */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add shadow for volume */
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .keyboard-container button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+
+    .on-screen-title {
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .input-container {
+      margin-top: 20px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Center horizontally */
+      flex-wrap: wrap;
+      
+    }
+
+    /* Center and make the counter bold */
+    #counter {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    /* Add timer styles */
+    #timer {
+      text-align: center;
+      font-weight: bold;
+      font-size: 24px;
+      margin-top: 20px;
+    }
+
+    #playAudioButton {
+      margin-left: 10px; /* Add margin to separate from the dropdown menu */
+    }
+
+    #textInput {
+      margin-right: 10px;
+      border-radius: 10px; /* Rounded corners */
+      height: 60px;
+      width: 500px;
+      font-size: 40px; /* Font size */
+    }
+
+    select {
+      vertical-align: middle; /* Align the select element vertically with the buttons */
+      padding: 5px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      height: 50px;
+      font-size: 24px;
+    }
+
+    #checkButton {
+      margin-left: 10px;
+    }
+
+    #nextButton {
+      margin-left: 10px; /* Add margin to separate from the input box */
+    }
+
+    #resetButton {
+      margin-left: 10px; /* Add margin to separate from the input box */
+    }
+
+    #feedback {
+      text-align: center; /* Center the text horizontally */
+      font-weight: bold; /* Make the text bold */
+      font-size: 20px; /* Increase the font size */
+      margin-top: 10px; /* Add margin from the top */
+      width: 100%; /* Ensure feedback message spans the entire width */
+    }
+    #exerciseOutput {
+      display: none; /* Hide the exercise phrases */
+    }
+    }
+  </style>
+</head>
+<body onload="initialize()">
+  <div class="container">
+    <div class="on-screen-title">Type what you hear</div>
+    <br><br>
+    <div id="timer"></div>
+    <br><br>
+    <div id="exerciseOutput" class="hide"></div>
+    <br><br>
+    <!-- Place the input box and check button within a container -->
+    <div class="input-container flex-container">
+      <input type="text" id="textInput" class="hide" autocomplete="off" autocorrect="off" autocapitalize="off" onkeypress="handleKeyPress(event)">
+      <button id="checkButton" class="hide" onclick="checkAnswer()">Check</button>
+      <button id="nextButton" class="hide" onclick="nextPhrase()">Next</button>
+      <button id="resetButton" class="hide" onclick="resetExercise()">Reset Exercise</button>
+      <div id="feedback" class="hide input-feedback"></div>
+    </div>
+    <!-- Move dropdown menu and play audio button below input box -->
+    <div class="input-container flex-container">
+      <select id="languageSelect" onchange="updateKeyboard()">
+        <option value="french">French</option>
+        <option value="german">German</option>
+        <option value="spanish">Spanish</option>
+      </select>
+      &nbsp;&nbsp;&nbsp;
+      <button id="playAudioButton" onclick="playAudio()">Play Audio</button>
+    </div>
+    <!-- Move reset button and next button below input box -->
+    <div class="input-container flex-container">
+    </div>
+    <div class="keyboard-container">
+      <!-- Placeholder for the keyboard -->
+    </div>
+    <div id="counter"></div>
+  
+    <script>
+      var currentPhraseIndex = 0; // Variable to keep track of the current word index
+      var exercisePhrases = []; // Array to store the phrases for the exercise
+      var totalPhrases = 10; // Total number of phrases for the exercise
+
+      function initialize() {
+        startTimer(); // Start the timer
+        updateCounter(); // Update the counter
+        generateExercise(); // Call generateExercise to display input box initially
+        generateKeyboard(document.getElementById('languageSelect').value); // Generate keyboard based on initially selected language
+        // Focus on the input box
+        document.getElementById('textInput').focus();
+      }
+
+      function generateKeyboard(language) {
+        console.log("Generating keyboard for language:", language);
+        var keyboardContainer = document.querySelector('.keyboard-container');
+        keyboardContainer.innerHTML = ''; // Clear previous keyboard
+
+        var vowels = [];
+        switch (language) {
+          case 'french':
+            vowels = ['à', 'â', 'ä','é', 'è', 'ê', 'ë', 'î', 'ï', 'ô','ö', 'ù', 'ü', 'û', 'ç'];
+            break;
+          case 'german':
+            vowels = ['ä', 'ö', 'ü', 'ß'];
+            break;
+          case 'spanish':
+            vowels = ['á', 'é', 'í', 'ó', 'ú', 'ñ'];
+            break;
+          default:
+            vowels = ['a', 'e', 'i', 'o', 'u'];
+            break;
+        }
+        console.log("Vowels:", vowels);
+
+        vowels.forEach(function (vowel) {
+          var button = document.createElement('button');
+          button.innerHTML = vowel; // Use innerHTML to handle HTML entities
+          button.className = 'keyboard-button';
+          button.setAttribute('onclick', 'insertLetter("' + vowel + '")');
+          keyboardContainer.appendChild(button);
+        });
+      }
+
+      function insertLetter(letter) {
+        var input = document.getElementById('textInput');
+        input.value += letter;
+      }
+
+      function generateExercisePhrases() {
+        // Dummy data for exercise phrases
+        var phrases = [
+         "mon père",
+"ma mère",
+"mon frère",
+"ma soeur",
+"cadet(te)",
+"ainé(e)",
+"mon oncle",
+"ma tante",
+"ma grand-mère",
+"mon grand-père",
+"mon demi-frère",
+"mon cousin",
+"ma belle-mère",
+"mon beau-père",
+"ma demi-sœur",
+"ma cousine",
+"mes parents",
+"mon frère jumeau",
+"ma soeur jumelle"
+        ];
+
+        // Shuffle the phrases array
+        var shuffledPhrases = phrases.sort(() => Math.random() - 0.5);
+
+        // Select the first 10 phrases from the shuffled array
+        exercisePhrases = shuffledPhrases.slice(0, totalPhrases);
+      }
+
+function generateExercise() {
+  // Clear the input box
+  document.getElementById('textInput').value = '';
+
+  // Generate random phrases for the exercise if not already generated
+  if (exercisePhrases.length === 0) {
+    generateExercisePhrases();
+  }
+  var exerciseOutput = document.getElementById('exerciseOutput');
+  exerciseOutput.innerHTML = ''; // Clear previous content
+  exerciseOutput.classList.remove('hide'); // Remove the 'hide' class to make the exercise container visible
+
+  // Display the current phrase
+  var currentPhrase = exercisePhrases[currentPhraseIndex];
+  var phraseElement = document.createElement('div');
+  phraseElement.textContent = currentPhrase;
+  exerciseOutput.appendChild(phraseElement);
+
+  // Show the input box
+  document.getElementById('textInput').classList.remove('hide');
+
+  // Show the Check button
+  document.getElementById('checkButton').classList.remove('hide');
+  document.getElementById('nextButton').classList.add('hide'); // Hide the Next button initially
+
+  // Clear feedback
+  document.getElementById('feedback').textContent = '';
+
+  // Hide the Next button
+  document.getElementById('nextButton').classList.add('hide');
+
+  // Autoplay audio for the current phrase
+  playAudio(); // Call the playAudio function to trigger audio playback
+}
+
+      function checkAnswer() {
+        var userInput = document.getElementById('textInput').value;
+        var correctAnswer = exercisePhrases[currentPhraseIndex];
+        if (userInput && userInput.toLowerCase() === correctAnswer.toLowerCase()) {
+          document.getElementById('feedback').textContent = 'Correct!';
+          // Show positive feedback below the input box
+          document.getElementById('feedback').classList.remove('hide');
+          // Hide the Check button
+          document.getElementById('checkButton').classList.add('hide');
+          // Show the Next button if it's not the last phrase
+          if (currentPhraseIndex < totalPhrases - 1) {
+            document.getElementById('nextButton').classList.remove('hide');
+          } else {
+            // Show the Reset button if it's the last phrase
+            document.getElementById('resetButton').classList.remove('hide');
+          }
+        } else {
+          document.getElementById('feedback').textContent = 'Incorrect. Please try again.';
+          // Show negative feedback below the input box
+          document.getElementById('feedback').classList.remove('hide');
+        }
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === 'Enter' && document.getElementById('nextButton').classList.contains('hide')) {
+          checkAnswer();
+        } else if (event.key === 'Enter' && !document.getElementById('nextButton').classList.contains('hide')) {
+          nextPhrase();
+        }
+      }
+
+      function nextPhrase() {
+        // Increment the current phrase index
+        currentPhraseIndex++;
+        
+        // Check if there are more phrases remaining
+        if (currentPhraseIndex < totalPhrases) {
+          // Generate the next exercise phrase
+          generateExercise();
+          
+          // Update the counter
+          updateCounter();
+        } else {
+          // If all phrases have been completed, display appropriate message or take necessary action
+          console.log("Exercise completed!");
+        }
+      }
+
+      function resetExercise() {
+        currentPhraseIndex = 0;
+        generateExercisePhrases(); // Generate new random phrases for the exercise
+        generateExercise(); // Display the first phrase of the new exercise
+        document.getElementById('resetButton').classList.add('hide'); // Hide the Reset button
+        // Update the counter to 1/10
+        updateCounter();
+      }
+
+      // Function to update the counter
+      function updateCounter() {
+        var counterElement = document.getElementById('counter');
+        counterElement.textContent = (currentPhraseIndex + 1) + '/' + totalPhrases;
+      }
+
+      // Timer related functions
+      var timerInterval;
+      var startTime;
+      var endTime;
+
+      function startTimer() {
+        startTime = new Date().getTime();
+        timerInterval = setInterval(updateTimer, 1000);
+      }
+
+      function stopTimer() {
+        clearInterval(timerInterval);
+      }
+
+      function updateTimer() {
+        var currentTime = new Date().getTime();
+        var elapsedTime = currentTime - startTime;
+        var minutes = Math.floor(elapsedTime / (1000 * 60));
+        var seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+        document.getElementById("timer").textContent = minutes + "m " + seconds + "s";
+      }
+
+   function playAudio() {
+  var speechSynthesis = window.speechSynthesis;
+  var utterance = new SpeechSynthesisUtterance(exercisePhrases[currentPhraseIndex]);
+  var selectedLanguage = document.getElementById('languageSelect').value;
+
+  // Set the language of the voice based on the selected language
+  switch (selectedLanguage) {
+    case 'french':
+      utterance.lang = 'fr-FR'; // French
+      break;
+    case 'german':
+      utterance.lang = 'de-DE'; // German
+      break;
+    case 'spanish':
+      utterance.lang = 'es-ES'; // Spanish
+      break;
+    default:
+      utterance.lang = 'en-US'; // Default to English
+      break;
+  }
+  
+  // Adjust the rate of speech (e.g., 0.5 for slower, 2 for faster)
+  utterance.rate = 0.7; // Adjust this value as needed
+  
+  speechSynthesis.speak(utterance);
+}
+      // Function to update the keyboard based on the selected language
+      function updateKeyboard() {
+        var selectedLanguage = document.getElementById('languageSelect').value;
+        generateKeyboard(selectedLanguage);
+      }
+    </script>
+  </div>
+</body>
+</html>
