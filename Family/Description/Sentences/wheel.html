@@ -59,11 +59,17 @@ h1,h2 { text-align:center; margin:0; }
 
 <script>
 const sentences = [
-  "Tést ùn",       // French
-  "Tést deux",      // Spanish
-  "Tést trois",          // German
-  "Tést quâtrè",                 // English
-    "Javascript Game"
+"Il a les yeux bleus et les cheveux courts.",
+"Elle a les cheveux longs et bouclés.",
+"Mon frère a les cheveux mi-longs et ondulés.",
+"Ma sœur a les cheveux raides et bruns.",
+"Jean a les cheveux noisette et frisés.",
+"Sophie a les cheveux roux et raides.",
+"Pierre est grand et mince.",
+"Marie est petite et de taille moyenne.",
+"Luc n'est pas très mince et il est beau.",
+"Anne est belle mais elle pense qu'elle est moche."
+
 ];
 
 let currentSentence="", hidden=[], currentPlayer=1, wheelValue=0, scores={1:0,2:0}, spinning=false, canSpin=true;
@@ -261,3 +267,4 @@ document.addEventListener("keydown", e => {
 </script>
 </body>
 </html>
+
