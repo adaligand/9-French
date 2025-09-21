@@ -59,11 +59,17 @@ h1,h2 { text-align:center; margin:0; }
 
 <script>
 const sentences = [
-  "Tést ùn",       // French
-  "Tést deux",      // Spanish
-  "Tést trois",          // German
-  "Tést quâtrè",                 // English
-    "Javascript Game"
+"Où est la gare ?",
+"Où sont les toilettes ?",
+"Va tout droit jusqu'au feu rouge.",
+"Allez tout droit jusqu'au musée.",
+"Tourne à gauche à la prochaine intersection.",
+"Tournez à droite après l'église.",
+"Prends la première rue à gauche.",
+"Prenez la première rue à droite.",
+"Descends la rue jusqu'au carrefour.",
+"Descendez la rue jusqu'au marché."
+
 ];
 
 let currentSentence="", hidden=[], currentPlayer=1, wheelValue=0, scores={1:0,2:0}, spinning=false, canSpin=true;
@@ -261,3 +267,4 @@ document.addEventListener("keydown", e => {
 </script>
 </body>
 </html>
+
