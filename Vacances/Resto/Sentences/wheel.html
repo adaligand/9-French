@@ -59,11 +59,17 @@ h1,h2 { text-align:center; margin:0; }
 
 <script>
 const sentences = [
-  "Tést ùn",       // French
-  "Tést deux",      // Spanish
-  "Tést trois",          // German
-  "Tést quâtrè",                 // English
-    "Javascript Game"
+"Bonjour, je voudrais réserver une table pour deux personnes.",
+"Qu’est-ce que vous désirez comme boisson?",
+"Comme entrée, je vais prendre une salade verte.",
+"Je prendrai un steak et des frites comme plat principal.",
+"Est-ce que vous avez un plat végétarien?",
+"Comme dessert, je choisirai un gâteau au chocolat.",
+"Vous pouvez apporter de l’eau, s’il vous plaît?",
+"Je vais commander une limonade pour mon amie.",
+"Quel est le plat du jour?",
+"Est-ce que vous servez du poisson aujourd’hui?"
+
 ];
 
 let currentSentence="", hidden=[], currentPlayer=1, wheelValue=0, scores={1:0,2:0}, spinning=false, canSpin=true;
@@ -261,3 +267,4 @@ document.addEventListener("keydown", e => {
 </script>
 </body>
 </html>
+
