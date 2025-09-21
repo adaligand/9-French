@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wheel of Riches</title>
+<style>
+body { font-family: Arial, sans-serif; padding:20px; margin:0; box-sizing:border-box; }
+h1,h2 { text-align:center; margin:0; }
+#hiddenSentence { font-size:28px; margin:20px 0; letter-spacing:5px; width:100%; text-align:center; }
+.game-container { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:20px; max-width:100%; }
+.scores { display:flex; flex-direction:column; gap:20px; flex:1 1 100px; min-width:100px; }
+.player-score { padding:15px 20px; border-radius:15px; background-color:#f0f0f0; font-size:20px; min-width:140px; text-align:center; transition:all 0.3s ease; }
+.player-score.active { font-size:28px; font-weight:bold; background-color:#ffeaa7; }
+#letters { display:flex; flex-wrap:wrap; justify-content:center; flex:1 1 300px; opacity:0; transform:translateY(50px); transition:opacity 0.5s, transform 0.5s; }
+#letters.show { opacity:1; transform:translateY(0); }
+.letter-button { margin:2px; padding:10px; font-size:18px; width:40px; border-radius:10px}
+.letter-box { display:inline-block; width:45px; height:50px; margin:4px; border-radius:10px; background-color:#e0e0e0; text-align:center; line-height:50px; font-weight:bold; font-size:24px; vertical-align:middle; }
+#wheelContainer { position:relative; width:400px; height:400px; flex:1 1 400px; max-width:100%; }
+#pointer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 25px solid red;
+  z-index: 2;
+}
+#wheelCanvas { cursor: pointer; border-radius: 50%; }
+#winnerMessage { text-align:center; font-size:24px; font-weight:bold; margin-top:20px; color:green; }
+#newGameBtn { display:block; margin:20px auto; padding:10px 20px; font-size:20px; border-radius:10px; cursor:pointer; }
+
+@media (max-width:1100px){#wheelContainer{width:300px;height:300px;}}
+@media (max-width:800px){.game-container{flex-direction:column;align-items:center;}#letters{order:2;margin:10px 0;}#wheelContainer{order:3;margin:10px 0;}.scores{flex-direction:row;gap:10px;order:1;width:100%;justify-content:space-around;}}
+</style>
+</head>
+<body>
+
+<h1>Wheel of Riches</h1>
+<h2 style="text-align:center;margin:5px 0;font-weight:normal;font-size:20px;">Spin the wheel and guess the sentence</h2>
+<div id="hiddenSentence"></div>
+<div id="winnerMessage"></div>
+<button id="newGameBtn" style="display:none;">New Game</button>
+
+<div class="game-container">
+  <div class="scores">
+    <div id="score1Box" class="player-score active">Player 1: $<span id="score1">0</span></div>
+    <div id="score2Box" class="player-score">Player 2: $<span id="score2">0</span></div>
+  </div>
+  <div id="letters"></div>
+  <div id="wheelContainer" style="position:relative; width:100%; max-width:400px;">
+    <div id="pointer"></div>
+    <canvas id="wheelCanvas" width="400" height="400" style="width:100%; height:auto; border-radius:50%;"></canvas>
+  </div>
+</div>
+
+<script>
+const sentences = [
+  "Tést ùn",       // French
+  "Tést deux",      // Spanish
+  "Tést trois",          // German
+  "Tést quâtrè",                 // English
+    "Javascript Game"
+];
+
+let currentSentence="", hidden=[], currentPlayer=1, wheelValue=0, scores={1:0,2:0}, spinning=false, canSpin=true;
+
+const wheelCanvas=document.getElementById("wheelCanvas"), ctx=wheelCanvas.getContext("2d");
+wheelCanvas.addEventListener("click", spinWheel);
+
+const lettersDiv=document.getElementById("letters");
+const score1Display=document.getElementById("score1"), score2Display=document.getElementById("score2");
+const score1Box=document.getElementById("score1Box"), score2Box=document.getElementById("score2Box");
+const hiddenDisplay=document.getElementById("hiddenSentence");
+const winnerMessage = document.getElementById("winnerMessage");
+const newGameBtn = document.getElementById("newGameBtn");
+
+const values=[10,25,50,75,100,250,275,750,1000,2500,5000,10000,10,25,50,75,100,250,275,750,1000];
+const colors=[
+"#1abc9c","#16a085","#2ecc71","#27ae60","#3498db","#2980b9","#9b59b6","#8e44ad",
+"#e74c3c","#c0392b","#d35400","#e67e22","#f1c40f","#1abc9c","#16a085",
+"#2ecc71","#27ae60","#3498db","#2980b9","#9b59b6","#8e44ad"
+];
+const center=200, radius=200, sectionAngle=2*Math.PI/values.length;
+let rotation=0;
+
+function drawWheel(){
+  ctx.clearRect(0,0,400,400);
+  for(let i=0;i<values.length;i++){
+    const start=i*sectionAngle+rotation;
+    const end=start+sectionAngle;
+
+    ctx.beginPath();
+    ctx.moveTo(center,center);
+    ctx.arc(center,center,radius,start,end);
+    ctx.closePath();
+    ctx.fillStyle=colors[i%colors.length];
+    ctx.fill();
+    ctx.strokeStyle="#333";
+    ctx.stroke();
+
+    const angle=start+sectionAngle/2;
+    const textRadius=radius*0.75;
+    const x=center+textRadius*Math.cos(angle);
+    const y=center+textRadius*Math.sin(angle);
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(angle + Math.PI);
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+    ctx.font="bold 16px Arial";
+    ctx.fillStyle="#fff";
+    ctx.fillText("$"+values[i],0,0);
+    ctx.restore();
+  }
+}
+drawWheel();
+
+function initGame(){
+  scores={1:0,2:0};
+  currentPlayer=1;
+  wheelValue=0;
+  winnerMessage.textContent = "";
+  newGameBtn.style.display = "none";
+  updateScores();
+  updateActiveScore();
+  currentSentence=sentences[Math.floor(Math.random()*sentences.length)];
+  hidden=currentSentence.split("").map(c => {
+    if(/[a-zA-ZÀ-ÿ]/.test(c)) return "_"; // letters hidden
+    else return c; // punctuation visible
+  });
+  updateHiddenDisplay();
+  createLetterButtons();
+  lettersDiv.classList.remove("show");
+  canSpin=true;
+}
+
+function updateHiddenDisplay() {
+  hiddenDisplay.innerHTML = hidden.map((c,i)=>{
+    if(c===" "){
+      return `<span class="letter-box" style="background:none;margin-right:20px;"></span>`;
+    } else {
+      return `<span class="letter-box">${c}</span>`;
+    }
+  }).join("");
+}
+
+function createLetterButtons(){
+  const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêôöù";
+  lettersDiv.innerHTML="";
+  for(let l of allLetters){
+    const btn=document.createElement("button");
+    btn.textContent=l;
+    btn.classList.add("letter-button");
+    btn.onclick=()=>guessLetter(l,btn);
+    lettersDiv.appendChild(btn);
+  }
+}
+
+function spinWheel() {
+  if (spinning || !canSpin) return;
+  spinning = true;
+  canSpin = false;
+
+  const sliceAngle = 2 * Math.PI / values.length;
+  const index = Math.floor(Math.random() * values.length);
+  const pointerAngle = 3 * Math.PI / 2;
+  const targetAngle = pointerAngle - (index * sliceAngle + sliceAngle / 2);
+  const currentNorm = ((rotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  let deltaRotation = targetAngle - currentNorm;
+  if(deltaRotation < 0) deltaRotation += 2 * Math.PI;
+  deltaRotation += (5 + Math.floor(Math.random()*3)) * 2 * Math.PI;
+
+  const duration = 4000;
+  const initialRotation = rotation;
+  let start=null;
+
+  function animate(timestamp){
+    if(!start) start = timestamp;
+    const elapsed = timestamp - start;
+    const progress = Math.min(elapsed/duration,1);
+    const easeOut = 1 - Math.pow(1 - progress,3);
+    rotation = initialRotation + easeOut * deltaRotation;
+    drawWheel();
+    if(progress < 1) requestAnimationFrame(animate);
+    else{
+      spinning=false;
+      lettersDiv.classList.add("show");
+      rotation = initialRotation + deltaRotation;
+      drawWheel();
+      wheelValue = values[index];
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function guessLetter(letter, btn){
+  if(wheelValue===0){alert("You must spin the wheel first!"); return;}
+  btn.disabled=true;
+  const indexes=[];
+  const lowerLetter = letter.toLowerCase();
+  for(let i=0;i<currentSentence.length;i++){
+    if(currentSentence[i].toLowerCase() === lowerLetter) indexes.push(i);
+  }
+
+  if(indexes.length===0){
+    setTimeout(()=>{
+      currentPlayer=currentPlayer===1?2:1;
+      wheelValue=0;
+      lettersDiv.classList.remove("show");
+      canSpin=true;
+      updateActiveScore();
+    },600);
+    return;
+  }
+
+  indexes.forEach((idx,i)=>{
+    setTimeout(()=>{
+      hidden[idx]=currentSentence[idx];
+      updateHiddenDisplay();
+      scores[currentPlayer]+=wheelValue;
+      updateScores();
+
+      if(i===indexes.length-1){
+        if(!hidden.includes("_")){
+          winnerMessage.textContent = `Player ${currentPlayer} wins!`;
+          newGameBtn.style.display = "block";
+          lettersDiv.classList.remove("show");
+          canSpin=false;
+          return;
+        }
+        setTimeout(()=>{
+          currentPlayer=currentPlayer===1?2:1;
+          wheelValue=0;
+          lettersDiv.classList.remove("show");
+          canSpin=true;
+          updateActiveScore();
+        },600);
+      }
+    }, i*800);
+  });
+}
+
+function updateScores(){score1Display.textContent=scores[1]; score2Display.textContent=scores[2];}
+function updateActiveScore(){if(currentPlayer===1){score1Box.classList.add("active");score2Box.classList.remove("active");}else{score1Box.classList.remove("active");score2Box.classList.add("active");}}
+
+newGameBtn.addEventListener("click", initGame);
+initGame();
+
+// Keyboard input
+document.addEventListener("keydown", e => {
+  let key = e.key.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  key = key.toUpperCase();
+  const buttons = Array.from(document.querySelectorAll(".letter-button"));
+  const btn = buttons.find(b => b.textContent.toUpperCase() === key);
+  if(btn && !btn.disabled) btn.click();
+});
+</script>
+</body>
+</html>
