@@ -59,11 +59,17 @@ h1,h2 { text-align:center; margin:0; }
 
 <script>
 const sentences = [
-  "Tést ùn",       // French
-  "Tést deux",      // Spanish
-  "Tést trois",          // German
-  "Tést quâtrè",                 // English
-    "Javascript Game"
+"Normalement, pour le goûter, je mange de la glace.",
+"En général, le soir, je mange un sandwich.",
+".Normalement, à midi, je mange des pâtes",
+"Normalement, comme casse-croûte, je mange des chips.",
+"Normalement, pour le petit-déjeuner, je bois du lait.",
+"D'habitude, pour le dîner, je bois du thé glacé.",
+"En général, le matin, je bois de l'eau.",
+"En général, à midi, je bois du thé.",
+"En général, pour le déjeuner, je mange des fraises.",
+"En général, à midi, je mange des œufs."
+
 ];
 
 let currentSentence="", hidden=[], currentPlayer=1, wheelValue=0, scores={1:0,2:0}, spinning=false, canSpin=true;
@@ -261,3 +267,4 @@ document.addEventListener("keydown", e => {
 </script>
 </body>
 </html>
+
